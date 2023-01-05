@@ -1,8 +1,49 @@
 from monopoly_exeptions import WrongInputError, ZeroThrowsError, LessThanRequiredError
+from random import randint
+
+class Dices:
+    def  __init__(self):
+        self._throws = 1
+        self._dublets = 0
+
+    def check_dublet(self, throw1, throw2):
+        if throw1 == throw2:
+            self._dublets +=1
+            self.add_throws()
+    
+    def dublets(self):
+        return self._dublets
+
+    def throws(self):
+        return self._throws
+
+    def add_throws(self, throws=1):
+        self._throws += throws
+
+    def set_zero_throws(self):
+        self._throws = 0
+
+    def throw_dices(self):
+        if self._throws != 0:
+            self._throws -= 1
+            x, y = dice_throw()
+            self.check_dublet(x, y)
+            if self.dublets() != 3:
+                self.move_forward(x + y)
+            else:
+                "To be written"
+        else:
+            raise ZeroThrowsError
+
+def dice_throw():
+    x = randint(1,6)
+    y = randint(1,6)
+    return [x, y]
 
 class Player(Dices):
     
     def __init__(self, money):
+        super().__init__()
         self._properties = []
         self._cards = []
         self._money = money
@@ -188,45 +229,17 @@ class Area:
     def area(self):
         return self._list_of_properties
 
-class Dices:
-    def  __init__(self):
-        self._throws = 1
-        self._dublets = 0
+# class Special_Squere(Squere):
+#     def __init__(self, position):
+#         super().__init__("Special", position)
 
-    def check_dublet(self, throw1, throw2):
-        return throw1 == throw2
-
-    def throws(self):
-        return self._throws
-
-    def add_throws(self, throws=1):
-        self._throws += 1
-
-    def set_zero_throws(self):
-        self._throws = 0
-
-    def throw_dices(self):
-        if self._throws != 0:
-            self._throws -= 1
-            self.position()
-        else:
-            raise ZeroThrowsError
-
-def dice_throw():
-    
-
-
-class Special_Squere(Squere):
-    def __init__(self, position):
-        super().__init__("Special", position)
-
-    def do_action(self, player):
-        if self == "Więzienie":
-            action == (player)
-        if self == "Start":
-            start
-        if self == "Parking":
-            parking()
-        if self == "Sz"
+#     def do_action(self, player):
+#         if self == "Więzienie":
+#             action == (player)
+#         if self == "Start":
+#             start
+#         if self == "Parking":
+#             parking()
+#         if self == "Sz"
 
 
