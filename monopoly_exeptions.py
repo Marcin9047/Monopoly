@@ -3,3 +3,6 @@ def ZeroThrowsError(Exeption):
 
 def WrongInputError(Exeption):
     pass
+
+def LessThanRequiredError(Exeption):
+    pass
