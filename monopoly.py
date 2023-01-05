@@ -1,4 +1,4 @@
-import monopoly.monopoly_exeptions as monopoly_exeptions
+import monopoly_exeptions
 
 class Player:
     
@@ -138,7 +138,7 @@ class Property(Squere):
 
     def set_pledge(self, value):
         if self.pledge() == value:
-            raise ValueError("To be written")
+            raise WrongInputError(f"Pledge is already set {value}")
         else:
             self._pledge = value
 
