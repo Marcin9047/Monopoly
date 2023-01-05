@@ -1,6 +1,6 @@
-import monopoly_exeptions
+from monopoly_exeptions import WrongInputError, ZeroThrowsError, LessThanRequiredError
 
-class Player:
+class Player(Dices):
     
     def __init__(self, money):
         self._properties = []
@@ -150,7 +150,7 @@ class Property(Squere):
 
     def subtract_houses(self, number=1):
         if self._houses < number:
-            raise ValueError("To be written")
+            raise LessThanRequiredError
         else:
             self._houses -= number
 
@@ -188,9 +188,16 @@ class Area:
     def area(self):
         return self._list_of_properties
 
-class Dice(Player):
+class Dices:
     def  __init__(self):
         self._throws = 1
+        self._dublets = 0
+
+    def check_dublet(self, throw1, throw2):
+        return throw1 == throw2
+
+    def throws(self):
+        return self._throws
 
     def add_throws(self, throws=1):
         self._throws += 1
@@ -198,29 +205,28 @@ class Dice(Player):
     def set_zero_throws(self):
         self._throws = 0
 
-    def throw(self):
+    def throw_dices(self):
         if self._throws != 0:
             self._throws -= 1
+            self.position()
         else:
             raise ZeroThrowsError
 
-class Card:
-    def __init__(self, give_money, take_money, pause, move_to, to_use_later=False):
-        self._give_money = give_money
-        self._take_money = take_money
-        self._pause = pause
-        self._move_to = move_to
-        self._able_to_use_later = to_use_later
+def dice_throw():
+    
 
-    def use(self, player):
-        player.add_money(self._give_money)
-        player.subtract_money(self._take_money)
-        
 
-    def name(self):
-        return self
+class Special_Squere(Squere):
+    def __init__(self, position):
+        super().__init__("Special", position)
 
-    def position(self):
-        return self._position
+    def do_action(self, player):
+        if self == "Więzienie":
+            action == (player)
+        if self == "Start":
+            start
+        if self == "Parking":
+            parking()
+        if self == "Sz"
 
 
