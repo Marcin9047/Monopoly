@@ -1,0 +1,25 @@
+1. "bank wypłaca ci dewidę w wysokości {}
+2. Nawiedzony dom - Wymień się nieruchomościami z wybranym graczem {nieruchomości muszą być podobnej wartośći}
+3."przejdź na start"
+4."przejdź na {}. jeśli miniesz start pobierz 200zł
+5. "cofnij się o {}"
+6. "otrzymałeś kredyt budowlany pobierz {}" 
+7. Klucz - zachowaj tą kartę będziesz mógł wyjść z więzienia
+8.Łapiesz złodzieja - poślij jednego gracza do więzienia
+9."przeprowadź generalny remont
+wszystkich posiadanych budynków
+zapłać po {} za każdy dom
+zapłać po {x4} za każdy hotel"
+10."zapłać za studia {}"
+11."wygrałeś konkurs krzyżówkowy pobierz {}
+12. Pomaganie się opłąca - Miasto odwdzięca się za akcje charytatywne - Wybierz gracza - Zyskujecie po {}
+13."zostałeś obciążony kosztami naprawy
+zapłać {} za każdy dom
+{x3} a każdy hotel"
+14."mandat za przekroczenie prędkości zapłać {}
+15."idź do wiezienia"
+"przejdź prosto do więzienia nie przechodź przez start nie pobieraj 200 zł"
+16."grzywna zapłać"
+17.Urodziny - dostajesz od każdego po {} zapłać
+18. Pękła rura, tracisz 1 domek w wybranej posiadłości
+19. Domówka - zyskujesz w {}
