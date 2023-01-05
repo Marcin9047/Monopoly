@@ -1,5 +1,5 @@
 import pytest
-from monopoly import Squere, Property, Area, Player, Dices, Cards
+from monopoly import Squere, Property, Area, Player, Dices, dice_throw
 
 """Tests for class Player"""
 
@@ -226,4 +226,38 @@ def test_check_if_fully_occupied():
     assert Europa.check_if_fully_occupied([Warszawa]) == False
     assert Europa.check_if_fully_occupied([Gdańsk, Warszawa]) == True
 
+"""Tests for class Dices"""
 
+def test_init():
+    player = Player(300)
+    assert player.throws() == 1
+    assert player.dublets() == 0
+
+def test_check_dublet():
+    player = Player(300)
+    player.check_dublet(3, 3)
+    assert player.dublets() == 1
+    assert player.throws() == 2
+
+def test_add_throws():
+    player = Player(300)
+    player.add_throws(3)
+    assert player.throws() == 4
+
+def test_set_zero_throws():
+    player = Player(300)
+    player.add_throws(3)
+    player.set_zero_throws()
+    assert player.throws() == 0
+
+def test_dice_throw():
+    """test if randint returns two intiger numbers"""
+    list = dice_throw()
+    assert len(list) == 2
+    for number in list:
+        assert isinstance(number, int)
+
+def test_throw_dices():
+    player = Player(300)
+    player.throw_dices()
+    assert player.position() != 0
