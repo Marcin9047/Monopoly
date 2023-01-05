@@ -1,3 +1,5 @@
+import monopoly.monopoly_exeptions as monopoly_exeptions
+
 class Player:
     
     def __init__(self, money):
@@ -186,24 +188,23 @@ class Area:
     def area(self):
         return self._list_of_properties
 
-class Dices(Player):
+class Dice(Player):
     def  __init__(self):
         self._throws = 1
 
-    def add(self, throws=1):
+    def add_throws(self, throws=1):
         self._throws += 1
 
-    def subtract(self, throws):
-        self._throws -= 1
-
-    def set_zero(self):
+    def set_zero_throws(self):
         self._throws = 0
 
     def throw(self):
         if self._throws != 0:
-            pass
+            self._throws -= 1
+        else:
+            raise ZeroThrowsError
 
-class Cards:
+class Card:
     def __init__(self, give_money, take_money, pause, move_to, to_use_later=False):
         self._give_money = give_money
         self._take_money = take_money
