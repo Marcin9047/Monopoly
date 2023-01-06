@@ -213,8 +213,7 @@ class Property(Squere):
         pass
 
     def __str__(self):
-        """To be written"""
-        pass
+        return "test"
 
 class Area:
     def __init__(self, list_of_properties):
@@ -229,17 +228,24 @@ class Area:
     def area(self):
         return self._list_of_properties
 
-# class Special_Squere(Squere):
-#     def __init__(self, position):
-#         super().__init__("Special", position)
+class Special_Squere(Squere):
+    def __init__(self, position):
+        super().__init__("Special", position)
 
-#     def do_action(self, player):
-#         if self == "Więzienie":
-#             action == (player)
-#         if self == "Start":
-#             start
-#         if self == "Parking":
-#             parking()
-#         if self == "Sz"
+    def do_action(self, player):
+        if self == "Więzienie":
+            pass
+        if self == "Start":
+            player.add_money(300)
+        if self == "Parking":
+            pass
+        if self == "Idź do więzienia":
+            player.go_to("Więzienie")
+        if self == "Lotnisko":
+            pass
+        if self == "Karta specjalna":
+            pass
 
-
+class Game:
+    def __init__(self):
+        pass
