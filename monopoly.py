@@ -42,8 +42,9 @@ def dice_throw():
 
 class Player(Dices):
     
-    def __init__(self, money):
+    def __init__(self, name, money):
         super().__init__()
+        self._name = name
         self._properties = []
         self._cards = []
         self._money = money
@@ -53,6 +54,9 @@ class Player(Dices):
 
     def properties(self):
         return self._properties
+
+    def name(self):
+        return self._name
 
     def set_properties(self, list):
         self._properties = list
@@ -144,14 +148,18 @@ class Squere:
         return self._position
 
 class Property(Squere):
-    def __init__(self, position, price, rent, area, owner=None, houses=0):
+    def __init__(self, name, position, price, rent, area, owner=None, houses=0):
         super().__init__("property", position)
+        self._name = name
         self._price = price
         self._rent = rent
         self._area = area
         self._owner = owner
         self._houses = houses
         self._pledge = False
+
+    def name(self):
+        return self._name
 
     def position(self):
         return self._position
@@ -216,8 +224,12 @@ class Property(Squere):
         return "test"
 
 class Area:
-    def __init__(self, list_of_properties):
+    def __init__(self, name, list_of_properties):
+        self._name = name
         self._list_of_properties = list_of_properties
+
+    def name(self):
+        return self._name
 
     def check_if_fully_occupied(self, list):
         for property in self.area():
@@ -229,8 +241,12 @@ class Area:
         return self._list_of_properties
 
 class Special_Squere(Squere):
-    def __init__(self, position):
+    def __init__(self, name, position):
         super().__init__("Special", position)
+        self._name = name
+
+    def name(self):
+        return self._name
 
     def do_action(self, player):
         pass
