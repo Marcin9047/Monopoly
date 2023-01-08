@@ -6,6 +6,7 @@ from monopoly import Squere, Property, Area, Player, Dices, dice_throw
 def read_database(database_file):
     with open(database_file, "r") as file_holder:
         data = json.load(file_holder)
+        all_properties = []
         for area in data:
             list_of_properties = []
             for property in data[area]:
@@ -13,9 +14,11 @@ def read_database(database_file):
                 position = row["position"]
                 price = row["price"]
                 rent = row["rent"]
-                property = Property(position, price, rent, area)
-                list_of_properties.append(property)
-            area = Area(list_of_properties)
+                new_property = Property(property, position, price, rent, area)
+                all_properties.append(new_property)
+                list_of_properties.append(new_property)
+            new_area = Area(area, list_of_properties)
+        return all_properties
 
 def write_game_logs(log_file, property):
     with open(log_file, "w") as file_holder:
