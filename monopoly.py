@@ -120,9 +120,13 @@ class Player(Dices):
 
     def move_forward(self, value):
         self._position += value
+        if self.position() > 39:
+            self._position -= 40
 
     def move_backward(self, value):
         self._position -= value
+        if self._position() < 0:
+            self._position = 40 + self.position()
 
     def pause(self):
         return self._pause
@@ -241,12 +245,17 @@ class Area:
         return self._list_of_properties
 
 class Special_Squere(Squere):
-    def __init__(self, name, position):
-        super().__init__("Special", position)
+    def __init__(self, name, position, value=None):
+        super().__init__("special", position)
+        if value:
+            self._value = value
         self._name = name
 
     def name(self):
         return self._name
+    
+    def value(self):
+        return self._value
 
     def do_action(self, player):
         pass
