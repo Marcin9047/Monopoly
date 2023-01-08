@@ -1,9 +1,130 @@
 {
-    "Azja": {
+    "Polska": {
         "Warszawa": {
+            "position": "3",
+            "price": "320",
+            "rent": "150"
+        },
+        "Kraków": {
+            "position": "1",
+            "price": "340",
+            "rent": "150"
+        }
+        },
+    "Niemcy": {
+        "Berlin": {
+            "position": "29",
+            "price": "320",
+            "rent": "150"
+        },
+        "Hamburg": {
+            "position": "26",
+            "price": "320",
+            "rent": "150"
+        },
+        "Monachium": {
+            "position": "27",
+            "price": "320",
+            "rent": "150"
+        }
+    },
+    "Francja" : {
+        "Paryż": {
+            "position": "19",
+            "price": "320",
+            "rent": "150"
+        },
+        "Lyon": {
+            "position": "18",
+            "price": "320",
+            "rent": "150"
+        },
+        "Nanntes": {
+            "position": "16",
+            "price": "320",
+            "rent": "150"
+        }
+    },
+    "Wielka Brytania": {
+        "Londyn": {
+            "position": "14",
+            "price": "320",
+            "rent": "150"
+        },
+        "Manchester": {
+            "position": "13",
+            "price": "320",
+            "rent": "150"
+        },
+        "Birmingham": {
+            "position": "11",
+            "price": "320",
+            "rent": "150"
+        }
+    },
+    "Hiszpania": {
+        "Madryt": {
+            "position": "9",
+            "price": "320",
+            "rent": "150"
+        },
+        "Barcelona": {
+            "position": "8",
+            "price": "320",
+            "rent": "150"
+        },
+        "Walencja": {
+            "position": "6",
+            "price": "320",
+            "rent": "150"
+        }
+    },
+    "USA": {
+        "Nowy York": {
+            "position": "39",
+            "price": "320",
+            "rent": "150"
+        },
+        "Los Angeles": {
+            "position": "37",
+            "price": "320",
+            "rent": "150"
+        }
+    },
+    "Włochy": {
+        "Rzym": {
+            "position": "24",
+            "price": "320",
+            "rent": "150"
+        },
+        "Mediolan": {
+            "position": "23",
+            "price": "320",
+            "rent": "150"
+        },
+        "Neapol": {
+            "position": "21",
+            "price": "320",
+            "rent": "150"
+        }
+    },
+    "Brazylia": {
+        "Rio de Janeiro": {
+            "position": "34",
+            "price": "320",
+            "rent": "150"
+        },
+        "Sao Paulo": {
+            "position": "31",
+            "price": "320",
+            "rent": "150"
+        },
+        "Brasilla": {
             "position": "32",
             "price": "320",
-            "rent": "250"
+            "rent": "150"
         }
+
     }
+
 }
