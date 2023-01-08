@@ -31,7 +31,7 @@ class Dices:
             if self.dublets() != 3:
                 self.move_forward(x + y)
             else:
-                "To be written"
+                "go_to_prison".do_action(self)
         else:
             raise ZeroThrowsError
 
@@ -233,19 +233,4 @@ class Special_Squere(Squere):
         super().__init__("Special", position)
 
     def do_action(self, player):
-        if self == "Więzienie":
-            pass
-        if self == "Start":
-            player.add_money(300)
-        if self == "Parking":
-            pass
-        if self == "Idź do więzienia":
-            player.go_to("Więzienie")
-        if self == "Lotnisko":
-            pass
-        if self == "Karta specjalna":
-            pass
-
-class Game:
-    def __init__(self):
         pass
