@@ -1,5 +1,5 @@
 import pytest
-from monopoly import Squere, Property, Area, Player, Dices, dice_throw
+from monopoly import Squere, Property, Area, Player, Dices, dice_throw, Special_Squere
 
 """Tests for class Player"""
 
@@ -261,3 +261,24 @@ def test_throw_dices():
     player = Player(300)
     player.throw_dices()
     assert player.position() != 0
+
+"""Tests for class Special_squere"""
+
+def test_init():
+    prison = Special_Squere(7)
+    start = Special_Squere(15)
+    parking = Special_Squere(27)
+    go_to_prison = Special_Squere(46)
+    airport = Special_Squere(52)
+    assert prison.position() == 7
+    assert start.position() == 15
+
+def test_do_Start_action():
+    prison = Special_Squere(7)
+    start = Special_Squere(15)
+    parking = Special_Squere(27)
+    go_to_prison = Special_Squere(46)
+    airport = Special_Squere(52)
+    player = Player(300)
+    start.do_action(player)
+    assert player.money() == 600
