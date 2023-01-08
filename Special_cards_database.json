@@ -1,0 +1,26 @@
+{
+   "Idziesz do więzienia": {
+    "position": "30"
+   },
+   "Parking":{
+    "position": "20"
+   },
+   "Start": {
+    "position": "0"
+   },
+   "Więzienie": {
+    "position": "10"
+   },
+   "Lotnisko": {
+    "position": "5, 15, 25, 35"
+   },
+   "Podatek": {
+    "position": "2, 12, 22, 33"
+   },
+   "Zarobek": {
+    "position": "4, 17, 28, 38"
+   },
+   "Karty": {
+    "position": "7, 18, 36"
+   }
+}
