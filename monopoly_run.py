@@ -17,10 +17,10 @@ class Game:
 
 def run_monopoly(database_file, players, init_money=3000):
     game_players = []
-    for player in players:
-        player = Player(init_money)
+    for one in players:
+        player = Player(one, init_money)
         game_players.append(player)
-        read_database(database_file)
+    list_of_properties = read_database(database_file)
     game = Game(players)
     while game.isactive():
         for player in game_players:
