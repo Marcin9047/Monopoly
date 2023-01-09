@@ -1,5 +1,5 @@
 import pytest
-from monopoly import Squere, Property, Area, Player, Dices, dice_throw, Special_Squere
+from monopoly import Square, Property, Area, Player, Dices, dice_throw, Special_Squere
 
 """Tests for class Player"""
 
@@ -12,39 +12,26 @@ def test_player_init():
     assert player.pause() == 0
     assert player.isactive() == True
 
-def test_set_properties():
-    player = Player("Marcin", 3000)
-    Warszawa = Property(3, 230, 150, "Poland", None)
-    Gdańsk = Property(3, 230, 150, "Poland", None)
-    player.set_properties([Warszawa, Gdańsk])
-    assert player.properties() == [Warszawa, Gdańsk]
-
 def test_add_property():
     player = Player("Marcin", 3000)
-    Warszawa = Property(3, 230, 150, "Poland", None)
-    Gdańsk = Property(3, 230, 150, "Poland", None)
-    Kraków = Property(3, 230, 150, "Poland", None)
-    player.set_properties([Warszawa, Gdańsk])
-    player.add_property(Kraków)
-    assert player.properties() == [Warszawa, Gdańsk, Kraków]
+    Warszawa = Property("Warszawa", 3, 230, 150, "Poland", None)
+    player.add_property(Warszawa)
+    assert player.properties() == [Warszawa]
 
 def test_subtract_property():
     player = Player("Marcin", 3000)
     Warszawa = Property(3, 230, 150, "Poland", None)
     Gdańsk = Property(3, 230, 150, "Poland", None)
-    player.set_properties([Warszawa, Gdańsk])
+    player._properties = [Warszawa, Gdańsk]
     player.subtract_property(Warszawa)
     assert player.properties() == [Gdańsk]
-    assert Gdańsk.owner() == player
-    assert Warszawa.owner() == None
 
 def test_sum_of_value():
     Warszawa = Property("Warszawa", 3, 230, 150, "Poland", None)
     Gdańsk = Property("Gdańsk", 3, 230, 150, "Poland", None)
     player = Player("Marcin", 3000)
-    player.set_properties([Warszawa, Gdańsk])
+    player._properties = [Warszawa, Gdańsk]
     assert player.value_of_properties() == 460
-    assert Warszawa.owner() == player
 
 def test_cards():
     player = Player("Marcin", 3000)
@@ -91,8 +78,7 @@ def test_position_diff():
 
 def test_go_to():
     player = Player("Marcin", 3000)
-    property = Property("Warszawa", 3, 230, 150, "Poland")
-    player.go_to(property) 
+    player.go_to(3) 
     assert player.position() == 3
 
 def test_move_forward():
@@ -103,7 +89,7 @@ def test_move_forward():
 def test_move_backward():
     player = Player("Marcin", 3000)
     Warszawa = Property("Warszawa", 3, 230, 150, "Poland")
-    player.go_to(Warszawa)
+    player.go_to(3)
     player.move_backward(2)
     assert player.position() == 1
 
@@ -160,10 +146,12 @@ def test_set_rent():
     assert Warszawa.rent() == 300
 
 def test_pay_rent():
-    Warszawa = Property("Warszawa", 3, 230, 150, "Poland")
+    owner = Player("Janek", 400)
     player = Player("Marcin", 300)
+    Warszawa = Property("Warszawa", 3, 230, 150, "Polska", owner)
     Warszawa.pay_rent(player)
     assert player.money() == 150
+    assert owner.money() == 550
 
 def test_set_owner():
     Warszawa = Property("Warszawa", 3, 230, 150, "Poland")
@@ -265,20 +253,13 @@ def test_throw_dices():
 """Tests for class Special_squere"""
 
 def test_init():
-    prison = Special_Squere(7)
-    start = Special_Squere(15)
-    parking = Special_Squere(27)
-    go_to_prison = Special_Squere(46)
-    airport = Special_Squere(52)
+    prison = Special_Squere("prision", 7)
+    start = Special_Squere("Start", 15)
     assert prison.position() == 7
     assert start.position() == 15
 
 def test_do_Start_action():
-    prison = Special_Squere(7)
-    start = Special_Squere(15)
-    parking = Special_Squere(27)
-    go_to_prison = Special_Squere(46)
-    airport = Special_Squere(52)
+    start = Special_Squere("Start", 15)
     player = Player("Marcin", 300)
     start.do_action(player)
     assert player.money() == 600
