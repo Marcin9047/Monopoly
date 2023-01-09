@@ -1,6 +1,11 @@
 from monopoly_exeptions import WrongInputError, ZeroThrowsError, LessThanRequiredError
 from random import randint
 
+
+def pos(int):
+    from monopoly_run import squares
+    return squares[int]
+    
 class Dices:
     def  __init__(self):
         self._throws = 1
@@ -10,9 +15,13 @@ class Dices:
         if throw1 == throw2:
             self._dublets +=1
             self.add_throws()
+        return throw1 == throw2
     
     def dublets(self):
         return self._dublets
+    
+    def set_zero_dublets(self):
+        self._dublets = 0
 
     def throws(self):
         return self._throws
@@ -24,14 +33,15 @@ class Dices:
         self._throws = 0
 
     def throw_dices(self):
-        if self._throws != 0:
+        if self._throws != 0 and self.pause() == 0:
             self._throws -= 1
             x, y = dice_throw()
-            self.check_dublet(x, y)
+            if not self.check_dublet(x, y):
+                self.set_zero_dublets()
             if self.dublets() != 3:
                 self.move_forward(x + y)
             else:
-                "go_to_prison".do_action(self)
+                pos(30).do_action(self)
         else:
             raise ZeroThrowsError
 
@@ -58,22 +68,11 @@ class Player(Dices):
     def name(self):
         return self._name
 
-    def set_properties(self, list):
-        self._properties = list
-        for property in list:
-            property.buy(self)
+    def add_property(self, prop):
+        self._properties.append(prop)
 
-    def add_property(self, property):
-        self._properties.append(property)
-        property.buy(self)
-
-    def subtract_property(self, property):
-        property.sell()
-        new_list = []
-        for one_property in self.properties():
-            if one_property != property:
-                new_list.append(one_property)
-        self.set_properties(new_list)
+    def subtract_property(self, prop):
+        self._properties.remove(prop)
 
     def value_of_properties(self):
         sum = 0
@@ -115,8 +114,8 @@ class Player(Dices):
     def position(self):
         return self._position
 
-    def go_to(self, place):
-        self._position = place.position()
+    def go_to(self, position):
+        self._position = position
 
     def move_forward(self, value):
         self._position += value
@@ -125,11 +124,17 @@ class Player(Dices):
 
     def move_backward(self, value):
         self._position -= value
-        if self._position() < 0:
+        if self.position() < 0:
             self._position = 40 + self.position()
 
     def pause(self):
         return self._pause
+    
+    def subtract_pause(self, value=1):
+        self._pause -= value
+        if self._pause < 0:
+            self._pause = 0
+
 
     def set_pause(self, value):
         self._pause = value
@@ -140,7 +145,7 @@ class Player(Dices):
     def set_inactive(self):
         self._isactive = False
 
-class Squere:
+class Square:
     def __init__(self, type, position):
         self._type = type
         self._position = position
@@ -151,7 +156,7 @@ class Squere:
     def position(self):
         return self._position
 
-class Property(Squere):
+class Property(Square):
     def __init__(self, name, position, price, rent, area, owner=None, houses=0):
         super().__init__("property", position)
         self._name = name
@@ -179,6 +184,10 @@ class Property(Squere):
 
     def pay_rent(self, player):
         player.subtract_money(self.rent())
+        while player.debit():
+            "To be written"
+            pass
+        self.owner().add_money(self.rent())
 
     def area(self):
         return self._area
@@ -214,15 +223,13 @@ class Property(Squere):
         owner = self.owner()
         owner.add_money(self.price())
         self.set_owner(None)
+        owner.subtract_property(self)
         
 
     def buy(self, player):
         self.set_owner(player)
         player.subtract_money(self.price())
-
-    def trade(self, other):
-        """To be written"""
-        pass
+        player.add_property(self)
 
     def __str__(self):
         return "test"
@@ -244,7 +251,7 @@ class Area:
     def area(self):
         return self._list_of_properties
 
-class Special_Squere(Squere):
+class Special_Squere(Square):
     def __init__(self, name, position, value=None):
         super().__init__("special", position)
         if value:
@@ -258,4 +265,7 @@ class Special_Squere(Squere):
         return self._value
 
     def do_action(self, player):
-        pass
+        if self.name() == "Idź do więzienia":
+            player.set_pause(3)
+        if self.name() == "Start":
+            player.add_money(300)

@@ -1,5 +1,8 @@
 import json
-from monopoly import Squere, Property, Area, Player, Dices, dice_throw, Special_Squere
+from monopoly import Property, Area, Special_Squere
+
+
+
 
 """for properties"""
 
