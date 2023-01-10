@@ -13,22 +13,26 @@ def test_player_init():
     assert player.isactive() == True
 
 def test_add_property():
+    poland = Area("Poland")
     player = Player("Marcin", 3000)
-    Warszawa = Property("Warszawa", 3, 230, 150, "Poland", None)
+    Warszawa = Property("Warszawa", 3, 230, 150, poland, None)
     player.add_property(Warszawa)
     assert player.properties() == [Warszawa]
 
 def test_subtract_property():
     player = Player("Marcin", 3000)
-    Warszawa = Property(3, 230, 150, "Poland", None)
-    Gdańsk = Property(3, 230, 150, "Poland", None)
-    player._properties = [Warszawa, Gdańsk]
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland)
+    Gdańsk = Property("Warszawa", 3, 230, 150, poland)
+    Warszawa.buy(player)
+    Gdańsk.buy(player)
     player.subtract_property(Warszawa)
     assert player.properties() == [Gdańsk]
 
 def test_sum_of_value():
-    Warszawa = Property("Warszawa", 3, 230, 150, "Poland", None)
-    Gdańsk = Property("Gdańsk", 3, 230, 150, "Poland", None)
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland, None)
+    Gdańsk = Property("Gdańsk", 3, 230, 150, poland, None)
     player = Player("Marcin", 3000)
     player._properties = [Warszawa, Gdańsk]
     assert player.value_of_properties() == 460
@@ -88,7 +92,8 @@ def test_move_forward():
 
 def test_move_backward():
     player = Player("Marcin", 3000)
-    Warszawa = Property("Warszawa", 3, 230, 150, "Poland")
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland)
     player.go_to(3)
     player.move_backward(2)
     assert player.position() == 1
@@ -115,7 +120,8 @@ def test_set_inactive():
 
 def test_squere():
     """Test of squere class"""
-    Warszawa = Property("Warszawa", 3, 230, 150, "Poland", "admin")
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland, "admin")
     assert Warszawa.type() == "property"
     assert Warszawa.position() == 3
 
@@ -123,76 +129,101 @@ def test_squere():
 
 def test_property_init():
     """Test of property class with all of the atributes writen"""
-    Warszawa = Property("Warszawa", 3, 230, 150, "Poland", "admin", 5)
+    poland = Area("Poland")
+    admin = Player("admin", 4000)
+    Warszawa = Property("Warszawa", 3, 230, 150, poland, admin, 5)
     assert Warszawa.position() == 3
     assert Warszawa.price() == 230
     assert Warszawa.rent() == 150
-    assert Warszawa.area() == "Poland"
-    assert Warszawa.owner() == "admin"
+    assert Warszawa.area() == poland
+    assert Warszawa.owner() == admin
     assert Warszawa.houses() == 5
 
 def test_property_init_no_owner():
     """Test when owner and houses are not given. Program should give owner=None and houses=0"""
-    Warszawa = Property("Warszawa", 3, 230, 150, "Poland")
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland)
     assert Warszawa.position() == 3
     assert Warszawa.price() == 230
-    assert Warszawa.area() == "Poland"
+    assert Warszawa.area() == poland
     assert Warszawa.owner() is None
     assert Warszawa.houses() == 0
 
-def test_set_rent():
-    Warszawa = Property("Warszawa", 3, 230, 150, "Poland")
-    Warszawa.set_rent(300)
+def test_increase_rent():
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland)
+    Warszawa.increase_rent(150)
     assert Warszawa.rent() == 300
+
+def test_decrease_rent():
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland)
+    Warszawa.decrease_rent(50)
+    assert Warszawa.rent() == 100
 
 def test_pay_rent():
     owner = Player("Janek", 400)
     player = Player("Marcin", 300)
-    Warszawa = Property("Warszawa", 3, 230, 150, "Polska", owner)
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland, owner)
     Warszawa.pay_rent(player)
     assert player.money() == 150
     assert owner.money() == 550
 
 def test_set_owner():
-    Warszawa = Property("Warszawa", 3, 230, 150, "Poland")
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland)
     player = Player("Marcin", 300)
     Warszawa.set_owner(player)
     assert Warszawa.owner() == player
 
 def test_pledge():
-    Warszawa = Property("Warszawa", 3, 230, 150, "Poland")
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland)
     assert Warszawa.pledge() == False
 
 def test_set_pledge():
-    Warszawa = Property("Warszawa", 3, 230, 150, "Poland")
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland)
     Warszawa.set_pledge(True)
     assert Warszawa.pledge() == True
 
-def test_add_house():
-    Warszawa = Property("Warszawa", 3, 230, 150, "Poland")
-    Warszawa.add_houses()
+def test_buy_house():
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland)
+    player = Player("admin", 4000)
+    Warszawa.buy(player)
+    Warszawa.buy_house()
     assert Warszawa.houses() == 1
 
-def test_add_houses():
-    Warszawa = Property("Warszawa", 3, 230, 150, "Poland")
-    Warszawa.add_houses(3)
+def test_buy_houses():
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland)
+    player = Player("admin", 4000)
+    Warszawa.buy(player)
+    Warszawa.buy_house(3)
     assert Warszawa.houses() == 3
 
-def test_subtract_houses():
-    Warszawa = Property("Warszawa", 3, 230, 150, "Poland")
-    Warszawa.add_houses(3)
-    Warszawa.subtract_houses(2)
+def test_sell_houses():
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland)
+    player = Player("admin", 4000)
+    Warszawa.buy(player)
+    Warszawa.buy_house(3)
+    Warszawa.sell_house(2)
     assert Warszawa.houses() == 1
 
 def test_buy_property():
-    Warszawa = Property("Warszawa", 3, 230, 150, "Poland")
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland)
     player = Player("Marcin", 300)
     Warszawa.buy(player)
     assert Warszawa.owner() == player
     assert player.money() == 70
 
 def test_sell_property():
-    Warszawa = Property("Warszawa", 3, 230, 150, "Poland")
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland)
     player = Player("Marcin", 300)
     Warszawa.buy(player)
     Warszawa.sell()
@@ -202,17 +233,20 @@ def test_sell_property():
 """Tests for class Area"""
 
 def test_area_init():
-    Warszawa = Property("Warszawa", 3, 230, 150, "Poland")
-    Gdańsk = Property("Gdańsk", 2,200, 150, "Poland")
-    Europa = Area("Europa", [Warszawa, Gdańsk])
-    assert Europa.area() == [Warszawa, Gdańsk]
+    area = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, area)
+    Gdańsk = Property("Gdańsk", 2,200, 150, area)
+    assert area.area() == [Warszawa, Gdańsk]
 
 def test_check_if_fully_occupied():
-    Warszawa = Property("Warszawa", 3, 230, 150, "Poland")
-    Gdańsk = Property("Gdańsk", 2,200, 150, "Poland")
-    Europa = Area("Europa", [Warszawa, Gdańsk])
-    assert Europa.check_if_fully_occupied([Warszawa]) == False
-    assert Europa.check_if_fully_occupied([Gdańsk, Warszawa]) == True
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland)
+    Gdańsk = Property("Gdańsk", 2,200, 150, poland)
+    player = Player("Player", 4000)
+    assert poland.check_if_fully_occupied(player) == False
+    Gdańsk.buy(player)
+    Warszawa.buy(player)
+    assert poland.check_if_fully_occupied(player) == True
 
 """Tests for class Dices"""
 
