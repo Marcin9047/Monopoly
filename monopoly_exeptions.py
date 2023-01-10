@@ -6,3 +6,6 @@ def WrongInputError(Exeption):
 
 def LessThanRequiredError(Exeption):
     pass
+
+def NotEnoughtMoneyError(Exeption):
+    pass
