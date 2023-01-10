@@ -11,16 +11,14 @@ def read_database_properties(database_file):
         data = json.load(file_holder)
         all_properties = []
         for area in data:
-            list_of_properties = []
+            new_area = Area(area)
             for property in data[area]:
                 row = data[area][property]
                 position = row["position"]
                 price = row["price"]
                 rent = row["rent"]
-                new_property = Property(property, int(position), price, rent, area)
+                new_property = Property(property, int(position), int(price), int(rent), new_area)
                 all_properties.append(new_property)
-                list_of_properties.append(new_property)
-            new_area = Area(area, list_of_properties)
         return all_properties
 
 

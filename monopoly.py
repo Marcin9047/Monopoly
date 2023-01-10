@@ -166,6 +166,7 @@ class Property(Square):
         self._owner = owner
         self._houses = houses
         self._pledge = False
+        self._area.add_property(self)
 
     def name(self):
         return self._name
@@ -176,8 +177,11 @@ class Property(Square):
     def price(self):
         return self._price
 
-    def set_rent(self, rent):
-        self._rent = rent
+    def increase_rent(self, rent):
+        self._rent += rent
+
+    def decrease_rent(self, rent):
+        self._rent -= rent
 
     def rent(self):
         return self._rent
@@ -207,14 +211,17 @@ class Property(Square):
     def pledge(self):
         return self._pledge
 
-    def add_houses(self, number=1):
+    def buy_house(self, number=1):
         self._houses += number
+        self.owner().subtract_money(200)
+        self.increase_rent(50)
 
-    def subtract_houses(self, number=1):
+    def sell_house(self, number=1):
         if self._houses < number:
             raise LessThanRequiredError
         else:
             self._houses -= number
+            self.owner().add_money(150)
 
     def houses(self):
         return self._houses
@@ -235,16 +242,19 @@ class Property(Square):
         return "test"
 
 class Area:
-    def __init__(self, name, list_of_properties):
+    def __init__(self, name):
         self._name = name
-        self._list_of_properties = list_of_properties
+        self._list_of_properties = []
+
+    def add_property(self, property):
+        self._list_of_properties.append(property)
 
     def name(self):
         return self._name
 
-    def check_if_fully_occupied(self, list):
+    def check_if_fully_occupied(self, player):
         for property in self.area():
-            if property not in list:
+            if property.owner() != player:
                 return False
         return True
 
@@ -264,8 +274,14 @@ class Special_Squere(Square):
     def value(self):
         return self._value
 
-    def do_action(self, player):
-        if self.name() == "Idź do więzienia":
+    def do_action(self, player, pos=None):
+        if self.name() == "Idziesz do więzienia":
             player.set_pause(3)
         if self.name() == "Start":
+            player.add_money(300)
+        if self.name() == "Lotnisko":
+            player.go_to(pos)
+        if self.name() == "Podatek":
+            player.subtract_money(300)
+        if self.name() == "Zarobek":
             player.add_money(300)
