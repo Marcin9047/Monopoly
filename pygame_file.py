@@ -1,0 +1,211 @@
+import pygame
+from pygame.locals import *
+
+
+def main(players, database):
+    # Initialise screen
+    pygame.init()
+    screen = pygame.display.set_mode((1920, 1080))
+    pygame.display.set_caption('Monopoly')
+    # pygame.display.toggle_fullscreen()
+
+    # Fill background
+    background = pygame.Surface(screen.get_size())
+    background = background.convert()
+    color = Color(250, 235, 215)
+    background.fill((color))
+    black = (0, 0, 0)
+    white = (255, 255, 255)
+    red = (90, 22, 22)
+    special = (244, 247, 210)
+
+    pygame.draw.rect(background, black, Rect(560, 80, 800, 800), 4)
+    pygame.draw.rect(background, white, Rect(562, 82, 796, 796))
+    pygame.draw.rect(background, black, Rect(662, 182, 596, 596))
+
+    pygame.draw.rect(background, black, Rect(560, 776, 104, 104), 2)
+    pygame.draw.rect(background, special, Rect(560 + 2, 776 + 2, 100, 100))
+    move = 556 + 596 + 104
+    pygame.draw.rect(background, black, Rect(move, 776, 104, 104), 2)
+    pygame.draw.rect(background, special, Rect(move + 2, 776 + 2, 100, 100))
+    move_up = 776 - 596 - 100
+    pygame.draw.rect(background, black, Rect(560, move_up, 104, 104), 2)
+    pygame.draw.rect(background, special, Rect(560 + 2, move_up + 2, 100, 100))
+    pygame.draw.rect(background, black, Rect(move, move_up, 100, 104), 2)
+    pygame.draw.rect(background, special, Rect(move + 2, move_up + 2, 100, 100))
+    """Poziome rzędy"""
+    for i in range(1, 10):
+        move_blk = i * 66
+        if database[10 - i].type() == "special":
+            pygame.draw.rect(background, special, Rect(596 + move_blk, 776, 68, 104))
+        pygame.draw.rect(background, black, Rect(596 + move_blk, 776, 68, 104), 2)
+        if database[i + 20].type() == "special":
+            pygame.draw.rect(background, special, Rect(596 + move_blk, move_up, 68, 104))
+        pygame.draw.rect(background, black, Rect(596 + move_blk, move_up, 68, 104), 2)
+
+    """Pionowe rzędy"""
+    for i in range(1, 10):
+        move_blk = i * 66
+        if database[20 - i].type() == "special":
+            pygame.draw.rect(background, special, Rect(560, move_up + 36 + move_blk, 104, 68))
+        pygame.draw.rect(background, black, Rect(560, move_up + 36 + move_blk, 104, 68), 2)
+        if database[i + 30].type() == "special":
+            pygame.draw.rect(background, special, Rect(move, move_up + 36 + move_blk, 104, 68))
+        pygame.draw.rect(background, black, Rect(move, move_up + 36 + move_blk, 104, 68), 2)
+
+
+
+    """Square names"""
+
+    """corners"""
+    font = pygame.font.Font(None, 20)
+    
+    for i in range(4):
+        sqr = database[10 * i]
+        text = font.render(sqr.name(), 1, black)
+        textpos = text.get_rect()
+        textpos.centerx = background.get_rect().centerx
+        text = pygame.transform.rotate(text, 45)
+        text = pygame.transform.rotate(text, -90 * i)
+        textpos = textpos.move(360, 825)
+        if i == 1 or i == 2:
+            textpos = textpos.move(-728, 0)
+        if i == 2 or i == 3:
+            textpos = textpos.move(0, -742)
+        background.blit(text, textpos)
+
+
+    """0 - 10"""
+    font = pygame.font.Font(None, 15)
+    for i in range(1, 10):
+        move_txt = i * 66
+        line = database[i].name()
+        if database[i].type() == "property":
+            pygame.draw.rect(background, black, Rect(1256 - move_txt, 777,  68, 25,), 2)
+            pygame.draw.rect(background, database[i].area().colour(), Rect(1258 - move_txt, 779, 64, 21))
+        text = font.render(line, 1, black)
+        textpos = text.get_rect()
+        textpos.centerx = background.get_rect().centerx
+        textpos = textpos.move( 332 - move_txt, 805)
+        background.blit(text, textpos)
+
+    """10 - 20"""
+    for i in range(1, 10):
+        move_txt = i * 66
+        line = database[i + 10].name()
+        if database[i + 10].type() == "property":
+            pygame.draw.rect(background, black, Rect(639, 776 - move_txt, 25, 68), 2)
+            pygame.draw.rect(background, database[i + 10].area().colour(), Rect(641, 778 - move_txt, 21, 64))
+        text = font.render(line, 1, black)
+        text = pygame.transform.rotate(text, 270)
+        textpos = text.get_rect()
+        textpos.centerx = background.get_rect().centerx
+        textpos = textpos.move( -332, 790 - move_txt)
+        background.blit(text, textpos)
+
+    """20 - 30"""
+    for i in range(1, 10):
+        move_txt = i * 66
+        line = database[i + 20].name()
+        if database[i + 20].type() == "property":
+            pygame.draw.rect(background, black, Rect(596 + move_txt, 159,  68, 25,), 2)
+            pygame.draw.rect(background, database[i + 20].area().colour(), Rect(598 + move_txt, 161, 64, 21))
+        text = font.render(line, 1, black)
+        text = pygame.transform.rotate(text, 180)
+        textpos = text.get_rect()
+        textpos.centerx = background.get_rect().centerx
+        textpos = textpos.move( -328 + move_txt, 145)
+        background.blit(text, textpos)
+
+    """30 - 40"""
+    for i in range(1, 10):
+        move_txt = i * 66
+        line = database[i + 30].name()
+        if database[i + 30].type() == "property":
+            pygame.draw.rect(background, black, Rect(1256, 116 + move_txt, 25, 68), 2)
+            pygame.draw.rect(background, database[i + 30].area().colour(), Rect(1258, 118 + move_txt, 21, 64))
+        text = font.render(line, 1, black)
+        text = pygame.transform.rotate(text, 90)
+        textpos = text.get_rect()
+        textpos.centerx = background.get_rect().centerx
+        textpos = textpos.move(332, 125 + move_txt)
+        background.blit(text, textpos)
+
+    """Score_tabel"""
+    score = (173, 186, 137)
+    pygame.draw.rect(background, score, Rect(1420, 80, 400, 800))
+    pygame.draw.rect(background, score, Rect(100, 80, 400, 800))
+    pygame.draw.rect(background, black, Rect(1420, 80, 400, 800), 3)
+    pygame.draw.rect(background, black, Rect(100, 80, 400, 800), 3)
+    pygame.draw.rect(background, black, Rect(1420, 80, 400, 100), 3)
+    pygame.draw.rect(background, black, Rect(100, 80, 400, 100), 3)
+
+    """Players title"""
+    font = pygame.font.Font(None, 50)
+    text = font.render("Players", 1, black)
+    textpos = text.get_rect()
+    textpos.centerx = background.get_rect().centerx
+    textpos = textpos.move(650, 110)
+    background.blit(text, textpos)
+
+    """Action title"""
+    font = pygame.font.Font(None, 50)
+    text = font.render("Action", 1, black)
+    textpos = text.get_rect()
+    textpos.centerx = background.get_rect().centerx
+    textpos = textpos.move(-660, 110)
+    background.blit(text, textpos)
+
+    """Player info"""
+
+    font = pygame.font.Font(None, 30)
+    for number, player in enumerate(players):
+        move_dw = 50 * number
+        line = f'{player.name()}:  {player.money()}'
+        text = font.render(line, 1, black)
+        textpos = text.get_rect()
+        textpos.centerx = background.get_rect().centerx
+        textpos = textpos.move( 600, 200 + move_dw)
+        background.blit(text, textpos)
+
+
+    for i in range(4):
+        pass
+
+
+    """Player name"""
+    font = pygame.font.Font(None, 50)
+    text = font.render("Witam w Monopoly", 1, (169, 218, 184))
+    textpos = text.get_rect()
+    textpos.centerx = background.get_rect().centerx
+    textpos = textpos.move(0, 20)
+    background.blit(text, textpos)
+
+
+    """Game name"""
+    
+    font = pygame.font.Font(None, 90)
+    text = font.render("Monopoly", 1, red)
+    textpos = text.get_rect()
+    textpos.centerx = background.get_rect().centerx
+    textpos = textpos.move(0, 430)
+    background.blit(text, textpos)
+
+
+
+    # Blit everything to the screen
+    screen.blit(background, (0, 0))
+    pygame.display.flip()
+
+    # Event loop
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                return
+
+        screen.blit(background, (0, 0))
+        pygame.display.flip()
+
+
+if __name__ == '__main__': main()
+
