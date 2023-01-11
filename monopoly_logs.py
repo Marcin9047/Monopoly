@@ -12,13 +12,20 @@ def read_database_properties(database_file):
         all_properties = []
         for area in data:
             new_area = Area(area)
-            for property in data[area]:
-                row = data[area][property]
-                position = row["position"]
-                price = row["price"]
-                rent = row["rent"]
-                new_property = Property(property, int(position), int(price), int(rent), new_area)
-                all_properties.append(new_property)
+            for one in data[area]:
+                if one == "colour":
+                    colour = data[area][one]
+                    list = []
+                    for i in colour.split(", "):
+                        list.append(int(i))
+                    new_area.set_colour(tuple(list))
+                else:
+                    row = data[area][one]
+                    position = row["position"]
+                    price = row["price"]
+                    rent = row["rent"]
+                    new_property = Property(one, int(position), int(price), int(rent), new_area)
+                    all_properties.append(new_property)
         return all_properties
 
 

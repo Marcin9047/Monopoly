@@ -1,6 +1,7 @@
 from monopoly import Dices, Player, Area, Property, Special_Squere
 from monopoly_logs import sort_database
 from monopoly_exeptions import WrongInputError, ZeroThrowsError, LessThanRequiredError, NotEnoughtMoneyError
+from pygame_file import main
 
 squares = sort_database("/home/marcin9047/Programowanie - dom/monopoly/database.json", "/home/marcin9047/Programowanie - dom/monopoly/Special_cards_database.json")
 
@@ -70,8 +71,10 @@ def players():
         player = input()
         if not player:
             break
-        players.append(player)
+        player_cls = Player(player, 3000)
+        players.append(player_cls)
     return players
 
 x = players()
-run_monopoly(x, 4000)
+main(x, squares)
+# run_monopoly(x, 4000)

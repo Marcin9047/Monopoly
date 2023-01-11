@@ -9,7 +9,8 @@
             "position": "1",
             "price": "340",
             "rent": "150"
-        }
+        },
+        "colour": "144, 144, 144"
         },
     "Niemcy": {
         "Berlin": {
@@ -26,7 +27,8 @@
             "position": "27",
             "price": "320",
             "rent": "150"
-        }
+        },
+        "colour": "55, 242, 161"
     },
     "Francja" : {
         "Paryż": {
@@ -43,7 +45,8 @@
             "position": "16",
             "price": "320",
             "rent": "150"
-        }
+        },
+        "colour": "117, 98, 192"
     },
     "Wielka Brytania": {
         "Londyn": {
@@ -51,16 +54,17 @@
             "price": "320",
             "rent": "150"
         },
-        "Manchester": {
+        "York": {
             "position": "13",
             "price": "320",
             "rent": "150"
         },
-        "Birmingham": {
+        "Glasgow": {
             "position": "11",
             "price": "320",
             "rent": "150"
-        }
+        },
+        "colour": "199, 122, 134"
     },
     "Hiszpania": {
         "Madryt": {
@@ -77,7 +81,8 @@
             "position": "6",
             "price": "320",
             "rent": "150"
-        }
+        },
+        "colour": "183, 192, 98"
     },
     "USA": {
         "Nowy York": {
@@ -85,11 +90,12 @@
             "price": "320",
             "rent": "150"
         },
-        "Los Angeles": {
+        "Miami": {
             "position": "37",
             "price": "320",
             "rent": "150"
-        }
+        },
+        "colour": "178, 102, 255"
     },
     "Włochy": {
         "Rzym": {
@@ -106,10 +112,11 @@
             "position": "21",
             "price": "320",
             "rent": "150"
-        }
+        },
+        "colour": "8, 16, 47 "
     },
     "Brazylia": {
-        "Rio de Janeiro": {
+        "Rio de Jan.": {
             "position": "34",
             "price": "320",
             "rent": "150"
@@ -123,7 +130,8 @@
             "position": "32",
             "price": "320",
             "rent": "150"
-        }
+        },
+        "colour": "156, 185, 151"
 
     }
 

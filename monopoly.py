@@ -1,4 +1,4 @@
-from monopoly_exeptions import WrongInputError, ZeroThrowsError, LessThanRequiredError
+from monopoly_exeptions import WrongInputError, ZeroThrowsError, LessThanRequiredError, NotEnoughtMoneyError
 from random import randint
 
 
@@ -212,6 +212,8 @@ class Property(Square):
         return self._pledge
 
     def buy_house(self, number=1):
+        if self.owner().money() < 200:
+            raise NotEnoughtMoneyError
         self._houses += number
         self.owner().subtract_money(200)
         self.increase_rent(50)
@@ -234,6 +236,8 @@ class Property(Square):
         
 
     def buy(self, player):
+        if player.money() < self.price():
+            raise NotEnoughtMoneyError
         self.set_owner(player)
         player.subtract_money(self.price())
         player.add_property(self)
@@ -245,6 +249,13 @@ class Area:
     def __init__(self, name):
         self._name = name
         self._list_of_properties = []
+        self._colour = 0
+    
+    def set_colour(self, colour):
+        self._colour = colour
+
+    def colour(self):
+        return self._colour
 
     def add_property(self, property):
         self._list_of_properties.append(property)
@@ -280,7 +291,7 @@ class Special_Squere(Square):
         if self.name() == "Start":
             player.add_money(300)
         if self.name() == "Lotnisko":
-            player.go_to(pos)
+            pass
         if self.name() == "Podatek":
             player.subtract_money(300)
         if self.name() == "Zarobek":
