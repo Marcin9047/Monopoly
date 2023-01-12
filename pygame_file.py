@@ -1,6 +1,51 @@
 import pygame
 from pygame.locals import *
+from monopoly_exeptions import WrongInputError, ZeroThrowsError, LessThanRequiredError, NotEnoughtMoneyError
 
+black = (0, 0, 0)
+white = (255, 255, 255)
+monopoly_txt = (255, 153, 255)
+special = (155, 155, 155)
+score = (173, 186, 137)
+color = (250, 235, 215)
+prop_color= (210, 210, 210)
+deck_cen = (80, 80, 80)
+
+def player_name_clr(background):
+    pygame.draw.rect(background, black, Rect(600, 20, 600, 50))
+    pygame.draw.rect(background, color, Rect(600, 20, 600, 50))
+
+
+def Player_name(player, background):
+    font = pygame.font.Font(None, 50)
+    player_name_clr(background)
+    text = font.render(player.name(), 1, (169, 218, 184))
+    textpos = text.get_rect()
+    textpos.centerx = background.get_rect().centerx
+    textpos = textpos.move(0, 20)
+    background.blit(text, textpos)
+
+def clear_score(background):
+    pygame.draw.rect(background, score, Rect(1425, 200, 380, 650))
+
+
+def Player_info(players, background):
+        font = pygame.font.Font(None, 30)
+        clear_score(background)
+        for number, player in enumerate(players):
+            move_dw = 50 * number
+            if player.pause() != 0:
+                line = f'{player.name()}:  {player.money()}    {player.pause()}'
+            else:
+                line = f'{player.name()}:  {player.money()}'
+            text = font.render(line, 1, black)
+            textpos = text.get_rect()
+            textpos.centerx = background.get_rect().centerx
+            textpos = textpos.move( 600, 200 + move_dw)
+            background.blit(text, textpos)
+
+def draw_card(background):
+    pygame.draw.rect(background, black, Rect(174, 410, 250, 400), 4)
 
 def main(players, database):
     # Initialise screen
@@ -12,16 +57,12 @@ def main(players, database):
     # Fill background
     background = pygame.Surface(screen.get_size())
     background = background.convert()
-    color = Color(250, 235, 215)
     background.fill((color))
-    black = (0, 0, 0)
-    white = (255, 255, 255)
-    red = (90, 22, 22)
-    special = (244, 247, 210)
+    
 
     pygame.draw.rect(background, black, Rect(560, 80, 800, 800), 4)
-    pygame.draw.rect(background, white, Rect(562, 82, 796, 796))
-    pygame.draw.rect(background, black, Rect(662, 182, 596, 596))
+    pygame.draw.rect(background, prop_color, Rect(562, 82, 796, 796))
+    pygame.draw.rect(background, deck_cen, Rect(662, 182, 596, 596))
 
     pygame.draw.rect(background, black, Rect(560, 776, 104, 104), 2)
     pygame.draw.rect(background, special, Rect(560 + 2, 776 + 2, 100, 100))
@@ -81,8 +122,8 @@ def main(players, database):
         move_txt = i * 66
         line = database[i].name()
         if database[i].type() == "property":
-            pygame.draw.rect(background, black, Rect(1256 - move_txt, 777,  68, 25,), 2)
-            pygame.draw.rect(background, database[i].area().colour(), Rect(1258 - move_txt, 779, 64, 21))
+            pygame.draw.rect(background, black, Rect(1256 - move_txt, 776,  68, 25,), 2)
+            pygame.draw.rect(background, database[i].area().colour(), Rect(1258 - move_txt, 778, 64, 21))
         text = font.render(line, 1, black)
         textpos = text.get_rect()
         textpos.centerx = background.get_rect().centerx
@@ -130,9 +171,11 @@ def main(players, database):
         textpos.centerx = background.get_rect().centerx
         textpos = textpos.move(332, 125 + move_txt)
         background.blit(text, textpos)
+    
+    
 
     """Score_tabel"""
-    score = (173, 186, 137)
+    
     pygame.draw.rect(background, score, Rect(1420, 80, 400, 800))
     pygame.draw.rect(background, score, Rect(100, 80, 400, 800))
     pygame.draw.rect(background, black, Rect(1420, 80, 400, 800), 3)
@@ -156,41 +199,34 @@ def main(players, database):
     textpos = textpos.move(-660, 110)
     background.blit(text, textpos)
 
-    """Player info"""
-
-    font = pygame.font.Font(None, 30)
-    for number, player in enumerate(players):
-        move_dw = 50 * number
-        line = f'{player.name()}:  {player.money()}'
-        text = font.render(line, 1, black)
-        textpos = text.get_rect()
-        textpos.centerx = background.get_rect().centerx
-        textpos = textpos.move( 600, 200 + move_dw)
-        background.blit(text, textpos)
-
-
-    for i in range(4):
-        pass
-
-
-    """Player name"""
-    font = pygame.font.Font(None, 50)
-    text = font.render("Witam w Monopoly", 1, (169, 218, 184))
-    textpos = text.get_rect()
-    textpos.centerx = background.get_rect().centerx
-    textpos = textpos.move(0, 20)
-    background.blit(text, textpos)
-
-
+    draw_card(background)
     """Game name"""
     
     font = pygame.font.Font(None, 90)
-    text = font.render("Monopoly", 1, red)
+    text = font.render("Monopoly", 1, monopoly_txt)
     textpos = text.get_rect()
     textpos.centerx = background.get_rect().centerx
     textpos = textpos.move(0, 430)
     background.blit(text, textpos)
 
+    """Pons position"""
+    xval = 1305
+    yval = 820
+    for number, player in enumerate(players):
+        x = 0
+        y = 0
+        number = number + 1
+        if number % 2 == 0:
+            x = 1
+        if number > 2:
+            y = 1
+        pygame.draw.rect(background, black, Rect(xval + (20 * x), yval + (20 * y), 14, 14), 2)
+        pygame.draw.rect(background, score, Rect(xval + 2 + (20 * x), yval + 2 + (20 * y), 10, 10))
+
+    """Pons move"""
+    clock = pygame.time.Clock()
+    FPS = 30
+    
 
 
     # Blit everything to the screen
@@ -202,9 +238,52 @@ def main(players, database):
         for event in pygame.event.get():
             if event.type == QUIT:
                 return
+        for player in players:
+            Player_name(player, background)
+            Player_info(players, background)
+            screen.blit(background, (0, 0))
+            pygame.display.flip()
+            while player.throws() != 0 and player.pause() == 0:
+                Player_info(players, background)
+                try:
+                    player.throw_dices()
+                    pos = player.position()
+                    active_sqr = database[pos]
+                    if active_sqr.type() == "special":
+                        active_sqr.do_action(player)
+                    elif active_sqr.type() == "property":
+                        if active_sqr.owner() != None and active_sqr.owner() != player:
+                            print(active_sqr.owner().name())
+                            active_sqr.pay_rent(player)
+                            if player.bankrut():
+                                players.remove(player)
+                        elif active_sqr.owner() != player:
+                            action = input("Co chcesz zrobić?")
+                            if action == "Kup":
+                                try:
+                                    active_sqr.buy(player)
+                                except NotEnoughtMoneyError():
+                                    print("Nie posiadasz wystarczających funduszy")
+                        elif active_sqr.area().check_if_fully_occupied(player):
+                            action = input("Możesz kupić domek, chcesz?: ")
+                            if action == "Tak":
+                                try:
+                                    active_sqr.buy_house()
+                                except NotEnoughtMoneyError():
+                                    print("Nie posiadasz wystarczających funduszy")
+                except:
+                    break
+            player.subtract_pause()
+            if player.pause() == 0:
+                player.add_throws()
 
-        screen.blit(background, (0, 0))
-        pygame.display.flip()
+        # screen.blit(background, (0, 0))
+        # pygame.display.flip()
+
+
+
+    
+    
 
 
 if __name__ == '__main__': main()
