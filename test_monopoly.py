@@ -1,7 +1,7 @@
 import pytest
 from monopoly import Square, Property, Area, Player
 from monopoly import Dices, Special_Square
-from monopoly_exeptions import WrongInputError, ZeroThrowsError
+from monopoly_exeptions import WrongInputError, ZeroThrowsError, NotOwnerOfEveryError
 from monopoly_exeptions import ZeroHousesError, NotEnoughtMoneyError
 from monopoly_exeptions import HousesNotEquallyError, HousesFullError
 
@@ -87,6 +87,12 @@ def test_subtract_money():
     assert player.money() == 1000
 
 
+def test_subtract_money_for_more_than_have():
+    player = Player("Marcin", 3000)
+    with pytest.raises(NotEnoughtMoneyError):
+        player.subtract_money(4000)
+
+
 def test_debit():
     player = Player("Marcin", 3000)
     with pytest.raises(NotEnoughtMoneyError):
@@ -110,6 +116,12 @@ def test_move_forward():
     assert player.position() == 4
 
 
+def test_move_forward_more_than_40():
+    player = Player("Marcin", 3000)
+    player.move_forward(43)
+    assert player.position() == 3
+
+
 def test_move_backward():
     player = Player("Marcin", 3000)
     player.go_to(3)
@@ -117,12 +129,19 @@ def test_move_backward():
     assert player.position() == 1
 
 
+def test_move_backward_less_than_0():
+    player = Player("Marcin", 3000)
+    player.go_to(3)
+    player.move_backward(5)
+    assert player.position() == 38
+
+
 def test_pause():
     player = Player("Marcin", 3000)
     assert player.pause() == 0
 
 
-def test_set_pouse():
+def test_set_pause():
     player = Player("Marcin", 3000)
     player.set_pause(2)
     assert player.pause() == 2
@@ -142,11 +161,15 @@ def test_set_inactive():
 """Tests for class Square """
 
 
-def test_squere():
-    """Test of squere class"""
+def test_squere_type():
     poland = Area("Poland")
     Warszawa = Property("Warszawa", 3, 230, 150, poland, "admin")
     assert Warszawa.type() == "property"
+
+
+def test_square_position():
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland, "admin")
     assert Warszawa.position() == 3
 
 
@@ -202,6 +225,15 @@ def test_pay_rent():
     assert owner.money() == 550
 
 
+def test_pay_rent_when_not_enought_money():
+    owner = Player("Janek", 400)
+    player = Player("Marcin", 300)
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 500, poland, owner)
+    with pytest.raises(NotEnoughtMoneyError):
+        Warszawa.pay_rent(player)
+
+
 def test_set_owner():
     poland = Area("Poland")
     Warszawa = Property("Warszawa", 3, 230, 150, poland)
@@ -224,6 +256,21 @@ def test_set_pledge():
     assert Warszawa.pledge() is True
 
 
+def test_set_same_value_pledge():
+    poland = Area("Poland")
+    player = Player("admin", 4000)
+    Warszawa = Property("Warszawa", 3, 230, 150, poland, player)
+    with pytest.raises(WrongInputError):
+        Warszawa.set_pledge(False)
+
+
+def test_check_house_cost():
+    poland = Area("Poland")
+    player = Player("admin", 4000)
+    Warszawa = Property("Warszawa", 3, 230, 150, poland, player)
+    assert Warszawa.check_house_cost() == 100
+
+
 def test_buy_house():
     poland = Area("Poland")
     player = Player("admin", 4000)
@@ -233,7 +280,36 @@ def test_buy_house():
     assert Warszawa.houses() == 1
 
 
-def test_sell_houses():
+def test_buy_house_when_not_enought_money():
+    poland = Area("Poland")
+    player = Player("admin", 400)
+    Warszawa = Property("Warszawa", 39, 230, 150, poland, player)
+    Warszawa.buy(player)
+    assert Warszawa.check_house_cost() == 400
+    with pytest.raises(NotEnoughtMoneyError):
+        Warszawa.buy_house()
+
+
+def test_5_houses_on_property_already():
+    poland = Area("Poland")
+    player = Player("admin", 4000)
+    Warszawa = Property("Warszawa", 39, 230, 150, poland, player, 4)
+    with pytest.raises(HousesFullError):
+        Warszawa.buy_house()
+
+
+def test_not_owner_of_full_area():
+    poland = Area("Poland")
+    player = Player("admin", 4000)
+    Warszawa = Property("Warszawa", 39, 230, 150, poland, player)
+    Gdańsk = Property("Gdańsk", 2, 200, 150, poland)
+    Warszawa.buy(player)
+    assert Warszawa.check_house_cost() == 400
+    with pytest.raises(NotOwnerOfEveryError):
+        Warszawa.buy_house()
+
+
+def test_sell_house():
     poland = Area("Poland")
     Warszawa = Property("Warszawa", 3, 230, 150, poland)
     player = Player("admin", 4000)
@@ -243,6 +319,15 @@ def test_sell_houses():
     assert Warszawa.houses() == 0
 
 
+def test_sell_house_when_0():
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland)
+    player = Player("admin", 4000)
+    Warszawa.buy(player)
+    with pytest.raises(ZeroHousesError):
+        Warszawa.sell_house()
+
+
 def test_buy_property():
     poland = Area("Poland")
     Warszawa = Property("Warszawa", 3, 230, 150, poland)
@@ -250,6 +335,14 @@ def test_buy_property():
     Warszawa.buy(player)
     assert Warszawa.owner() == player
     assert player.money() == 70
+
+
+def test_not_enought_money_to_buy():
+    poland = Area("Poland")
+    Warszawa = Property("Warszawa", 3, 230, 150, poland)
+    player = Player("Marcin", 200)
+    with pytest.raises(NotEnoughtMoneyError):
+        Warszawa.buy(player)
 
 
 def test_sell_property():
@@ -266,6 +359,11 @@ def test_sell_property():
 
 
 def test_area_init():
+    area = Area("Poland")
+    assert area.name() == "Poland"
+
+
+def test_area_properties():
     area = Area("Poland")
     Warszawa = Property("Warszawa", 3, 230, 150, area)
     Gdańsk = Property("Gdańsk", 2, 200, 150, area)
@@ -325,6 +423,13 @@ def test_throw_dices():
     player = Player("Marcin", 300)
     player.throw_dices()
     assert player.position() != 0
+
+
+def test_throw_dices_when_zero_throws():
+    player = Player("Marcin", 300)
+    player.set_zero_throws()
+    with pytest.raises(ZeroThrowsError):
+        player.throw_dices()
 
 
 """Tests for class Special_squere"""

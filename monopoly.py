@@ -1,4 +1,4 @@
-from monopoly_exeptions import WrongInputError, ZeroThrowsError
+from monopoly_exeptions import WrongInputError, ZeroThrowsError, NotOwnerOfEveryError
 from monopoly_exeptions import ZeroHousesError, NotEnoughtMoneyError
 from monopoly_exeptions import HousesNotEquallyError, HousesFullError
 from random import randint
@@ -182,7 +182,7 @@ class Property(Square):
         self._houses = houses
         self._pledge = False
         self._area.add_property(self)
-        self._house_cost = self.house_cost()
+        self.set_house_cost()
 
     def name(self):
         return self._name
@@ -234,15 +234,17 @@ class Property(Square):
     def pledge(self):
         return self._pledge
 
-    def house_cost(self):
+    def set_house_cost(self):
         side = (self.position() // 10) + 1
-        return 100 * side
+        self._house_cost = 100 * side
 
     def check_house_cost(self):
         return self._house_cost
 
     def buy_house(self):
-        if self.houses == 4:
+        if not self.area().check_if_fully_occupied(self.owner()):
+            raise NotOwnerOfEveryError
+        if self.houses() == 4:
             raise HousesFullError
         cost = self.check_house_cost()
         if self.owner().check_debit(cost):
@@ -264,7 +266,7 @@ class Property(Square):
             raise ZeroHousesError
         else:
             self._houses -= 1
-            self.owner().add_money(self.house_cost())
+            self.owner().add_money(self.check_house_cost())
 
     def houses(self):
         return self._houses
@@ -334,6 +336,6 @@ class Special_Square(Square):
         if self.name() == "Lotnisko":
             pass
         if self.name() == "Podatek":
-            player.subtract_money(300)
+            player.subtract_money(self._value)
         if self.name() == "Zarobek":
-            player.add_money(300)
+            player.add_money(self._value)

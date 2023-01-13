@@ -20,3 +20,7 @@ class HousesFullError(Exception):
 
 class HousesNotEquallyError(Exception):
     pass
+
+
+class NotOwnerOfEveryError(Exception):
+    pass

@@ -33,8 +33,12 @@ def read_database_special(database_file):
         for square in data:
             row = data[square]
             positions = row["position"]
+            if len(row) == 2:
+                value = row["value"]
+            else:
+                value = None
             for one in positions.split(", "):
-                new_special = Special_Square(square, int(one))
+                new_special = Special_Square(square, int(one), value)
                 all_special.append(new_special)
         return all_special
 

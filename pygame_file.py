@@ -1,7 +1,7 @@
 import pygame
 import sys
 from pygame.locals import *
-from monopoly_exeptions import WrongInputError, ZeroThrowsError, LessThanRequiredError, NotEnoughtMoneyError
+from monopoly_exeptions import WrongInputError, ZeroThrowsError, NotEnoughtMoneyError
 
 class Button:
     def __init__(self, name, xval, yval, xsize, ysize, colour):

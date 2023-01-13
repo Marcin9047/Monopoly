@@ -1,6 +1,6 @@
 from monopoly import Dices, Player, Area, Property, Special_Square
 from monopoly_logs import sort_database
-from monopoly_exeptions import WrongInputError, ZeroThrowsError, LessThanRequiredError, NotEnoughtMoneyError
+from monopoly_exeptions import WrongInputError, ZeroThrowsError, NotEnoughtMoneyError
 from pygame_file import main
 
 prop = "/home/marcin9047/Programowanie - dom/monopoly/database.json"
