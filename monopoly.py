@@ -5,21 +5,22 @@ from random import randint
 def pos(int):
     from monopoly_run import squares
     return squares[int]
-    
+
+
 class Dices:
-    def  __init__(self):
+    def __init__(self):
         self._throws = 1
         self._dublets = 0
 
     def check_dublet(self, throw1, throw2):
         if throw1 == throw2:
-            self._dublets +=1
+            self._dublets += 1
             self.add_throws()
         return throw1 == throw2
-    
+
     def dublets(self):
         return self._dublets
-    
+
     def set_zero_dublets(self):
         self._dublets = 0
 
@@ -45,13 +46,14 @@ class Dices:
         else:
             raise ZeroThrowsError
 
+
 def dice_throw():
-    x = randint(1,6)
-    y = randint(1,6)
+    x = randint(1, 6)
+    y = randint(1, 6)
     return [x, y]
 
+
 class Player(Dices):
-    
     def __init__(self, name, money):
         super().__init__()
         self._name = name
@@ -61,6 +63,12 @@ class Player(Dices):
         self._position = 0
         self._pause = 0
         self._isactive = True
+
+    def set_pon(self, pon):
+        self._pon = pon
+
+    def pon(self):
+        return self._pon
 
     def properties(self):
         return self._properties
@@ -79,7 +87,7 @@ class Player(Dices):
         for property in self.properties():
             sum += property.price()
         return sum
-    
+
     def cards(self):
         return self._cards
 
@@ -129,12 +137,11 @@ class Player(Dices):
 
     def pause(self):
         return self._pause
-    
+
     def subtract_pause(self, value=1):
         self._pause -= value
         if self._pause < 0:
             self._pause = 0
-
 
     def set_pause(self, value):
         self._pause = value
@@ -144,6 +151,7 @@ class Player(Dices):
 
     def set_inactive(self):
         self._isactive = False
+
 
 class Square:
     def __init__(self, type, position):
@@ -155,6 +163,7 @@ class Square:
 
     def position(self):
         return self._position
+
 
 class Property(Square):
     def __init__(self, name, position, price, rent, area, owner=None, houses=0):
@@ -233,7 +242,6 @@ class Property(Square):
         owner.add_money(self.price())
         self.set_owner(None)
         owner.subtract_property(self)
-        
 
     def buy(self, player):
         if player.money() < self.price():
@@ -245,12 +253,13 @@ class Property(Square):
     def __str__(self):
         return "test"
 
+
 class Area:
     def __init__(self, name):
         self._name = name
         self._list_of_properties = []
         self._colour = 0
-    
+
     def set_colour(self, colour):
         self._colour = colour
 
@@ -272,7 +281,8 @@ class Area:
     def area(self):
         return self._list_of_properties
 
-class Special_Squere(Square):
+
+class Special_Square(Square):
     def __init__(self, name, position, value=None):
         super().__init__("special", position)
         if value:
@@ -281,7 +291,7 @@ class Special_Squere(Square):
 
     def name(self):
         return self._name
-    
+
     def value(self):
         return self._value
 

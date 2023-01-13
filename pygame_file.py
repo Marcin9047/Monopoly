@@ -1,7 +1,36 @@
 import pygame
+import sys
 from pygame.locals import *
 from monopoly_exeptions import WrongInputError, ZeroThrowsError, LessThanRequiredError, NotEnoughtMoneyError
 
+class Button:
+    def __init__(self, name, xval, yval, xsize, ysize, colour):
+        self._name = name
+        self.xval = xval
+        self.yval = yval
+        self.xsize = xsize
+        self.ysize = ysize
+        self.colour = colour
+
+    def draw(self, surface):
+        self._hitbox = Rect(self.xval, self.yval, self.xsize, self.ysize)
+        pygame.draw.rect(surface, black, Rect(self.xval, self.yval, self.xsize, self.ysize), 4)
+        pygame.draw.rect(surface, self.colour, Rect(self.xval + 2, self.yval + 2, self.xsize -4, self.ysize - 4))
+        fontsize = (8 * self.ysize) // 10
+        font = pygame.font.Font(None, fontsize)
+        text = font.render(self.name(), 1, black)
+        textpos = text.get_rect()
+        textpos = textpos.move(self.xval + (self.xsize // 4) , self.yval + (self.ysize // 4))
+        surface.blit(text, textpos)
+
+    def name(self):
+        return self._name
+
+    def hitbox(self):
+         return self._hitbox
+
+
+"""Colours"""
 black = (0, 0, 0)
 white = (255, 255, 255)
 monopoly_txt = (255, 153, 255)
@@ -94,7 +123,7 @@ def main(players, database):
             pygame.draw.rect(background, special, Rect(move, move_up + 36 + move_blk, 104, 68))
         pygame.draw.rect(background, black, Rect(move, move_up + 36 + move_blk, 104, 68), 2)
 
-
+    
 
     """Square names"""
 
@@ -227,7 +256,8 @@ def main(players, database):
     clock = pygame.time.Clock()
     FPS = 30
     
-
+    bt = Button("Kup", 50, 400, 100, 20, white)
+    bt.draw(background)
 
     # Blit everything to the screen
     screen.blit(background, (0, 0))
@@ -258,12 +288,15 @@ def main(players, database):
                             if player.bankrut():
                                 players.remove(player)
                         elif active_sqr.owner() != player:
-                            action = input("Co chcesz zrobić?")
-                            if action == "Kup":
-                                try:
-                                    active_sqr.buy(player)
-                                except NotEnoughtMoneyError():
-                                    print("Nie posiadasz wystarczających funduszy")
+                            print("Co chcesz zrobić?")
+                            while True:
+                                for event in pygame.event.get():
+                                    if event.type == MOUSEBUTTONDOWN and bt.hitbox().collidepoint(pygame.mouse.get_pos()):
+                                        try:
+                                            active_sqr.buy(player)
+                                            pygame.display.flip()
+                                        except NotEnoughtMoneyError():
+                                            print("Nie posiadasz wystarczających funduszy")
                         elif active_sqr.area().check_if_fully_occupied(player):
                             action = input("Możesz kupić domek, chcesz?: ")
                             if action == "Tak":
