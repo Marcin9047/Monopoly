@@ -1,33 +1,8 @@
 import pygame
 import sys
 from pygame.locals import *
+from pygame.locals import Rect
 from monopoly_exeptions import WrongInputError, ZeroThrowsError, NotEnoughtMoneyError
-
-class Button:
-    def __init__(self, name, xval, yval, xsize, ysize, colour):
-        self._name = name
-        self.xval = xval
-        self.yval = yval
-        self.xsize = xsize
-        self.ysize = ysize
-        self.colour = colour
-
-    def draw(self, surface):
-        self._hitbox = Rect(self.xval, self.yval, self.xsize, self.ysize)
-        pygame.draw.rect(surface, black, Rect(self.xval, self.yval, self.xsize, self.ysize), 4)
-        pygame.draw.rect(surface, self.colour, Rect(self.xval + 2, self.yval + 2, self.xsize -4, self.ysize - 4))
-        fontsize = (8 * self.ysize) // 10
-        font = pygame.font.Font(None, fontsize)
-        text = font.render(self.name(), 1, black)
-        textpos = text.get_rect()
-        textpos = textpos.move(self.xval + (self.xsize // 4) , self.yval + (self.ysize // 4))
-        surface.blit(text, textpos)
-
-    def name(self):
-        return self._name
-
-    def hitbox(self):
-         return self._hitbox
 
 
 """Colours"""
@@ -37,44 +12,220 @@ monopoly_txt = (255, 153, 255)
 special = (155, 155, 155)
 score = (173, 186, 137)
 color = (250, 235, 215)
-prop_color= (210, 210, 210)
+prop_color = (210, 210, 210)
 deck_cen = (80, 80, 80)
 
-def player_name_clr(background):
-    pygame.draw.rect(background, black, Rect(600, 20, 600, 50))
-    pygame.draw.rect(background, color, Rect(600, 20, 600, 50))
 
 
-def Player_name(player, background):
-    font = pygame.font.Font(None, 50)
-    player_name_clr(background)
-    text = font.render(player.name(), 1, (169, 218, 184))
-    textpos = text.get_rect()
-    textpos.centerx = background.get_rect().centerx
-    textpos = textpos.move(0, 20)
-    background.blit(text, textpos)
 
-def clear_score(background):
-    pygame.draw.rect(background, score, Rect(1425, 200, 380, 650))
+class Player_name_title():
+    def __init__(self, background, color):
+        self.background = background
+        self.color = color
+
+    def draw(self, player):
+        font = pygame.font.Font(None, 50)
+        text = font.render(player.name(), 1, self.color)
+        textpos = text.get_rect()
+        textpos.centerx = self.background.get_rect().centerx
+        textpos = textpos.move(0, 20)
+        self.background.blit(text, textpos)
+
+    def clear(self):
+        pygame.draw.rect(self.background, black, Rect(600, 20, 600, 50))
+        pygame.draw.rect(self.background, color, Rect(600, 20, 600, 50))
 
 
-def Player_info(players, background):
+class Side_Table:
+    def __init__(self, backgr, color, sizex, sizey, xcord, ycord, title_hight):
+        self.background = backgr
+        self.sizex = sizex
+        self.sizey = sizey
+        self.xcord = xcord
+        self.ycord = ycord
+        self.color = color
+        self.title_hight = title_hight
+
+    def clear_score(background):
+        pygame.draw.rect(background, score, Rect(1425, 200, 380, 650))
+
+    def draw(self):
+        left = self.xcord
+        top = self.ycord
+        sizex = self.sizex
+        sizey = self.sizey
+        tl_hgh = self.title_hight
+        title = Rect(left, top, sizex, tl_hgh)
+        main = Rect(left, top, sizex, sizey)
+        self.set_hitbox(main)
+        pygame.draw.rect(self.background, self.color, main)
+        pygame.draw.rect(self.background, black, main, 3)
+        pygame.draw.rect(self.background, black, title, 3)
+
+    def set_hitbox(self, rect):
+        self._hitbox = rect
+
+    def hitbox(self):
+        return self._hitbox
+
+
+class Score_text(Side_Table):
+    def __init__(self, players, backgr, color, sizex, sizey, xcord, ycord, title_hight):
+        super().__init__(backgr, color, sizex, sizey, xcord, ycord, title_hight)
+        self.players = players
+
+    def line(self, player):
+        name = player.name()
+        money = player.money()
+        pause = player.pause()
+        if pause != 0:
+            line = f'{name}:  {money}    {pause}'
+        else:
+            line = f'{name}:  {money}'
+        return line
+
+    def draw_text(self):
         font = pygame.font.Font(None, 30)
-        clear_score(background)
-        for number, player in enumerate(players):
+        for number, player in enumerate(self.players):
             move_dw = 50 * number
-            if player.pause() != 0:
-                line = f'{player.name()}:  {player.money()}    {player.pause()}'
-            else:
-                line = f'{player.name()}:  {player.money()}'
+            line = self.line(player)
             text = font.render(line, 1, black)
             textpos = text.get_rect()
-            textpos.centerx = background.get_rect().centerx
-            textpos = textpos.move( 600, 200 + move_dw)
-            background.blit(text, textpos)
+            textpos.centerx = self.hitbox().get_rect().centerx
+            textpos = textpos.move(0, self.title_hight + 50 + move_dw)
+            self.background.blit(text, textpos)
+
+
+class Action_Text(Side_Table):
+    def __init__(self, backgr, data, color, sizex, sizey, xcord, ycord, title_hight):
+        super().__init__(self, backgr, color, sizex, sizey, xcord, ycord, title_hight)
+        self.data = data
+        self._buttons = []
+
+    def add_button(self, button):
+        self._buttons.append(button)
+
+    def buttons(self):
+        return self._buttons
+
+    def draw_action(self, player):
+        position = self.data[player.position()]
+        pygame.draw.rect(self.background, black, Rect(174, 410, 250, 400), 4)
+
+
+class Button(Action_Text):
+    def __init__(self, name, surf, xval, yval, xsize, ysize, colour):
+        self.surface = surf
+        self._name = name
+        self.xval = xval
+        self.yval = yval
+        self.xsize = xsize
+        self.ysize = ysize
+        self.colour = colour
+
+    def draw(self):
+        surf = self.surface
+        x = self.xval
+        y = self.yval
+        xsize = self.xsize
+        ysize = self.ysize
+        self._hitbox = Rect(x, y, xsize, ysize)
+        pygame.draw.rect(surf, black, Rect(x, y, xsize, ysize), 4)
+        xsize -= 4
+        ysize -= 4
+        pygame.draw.rect(surf, self.colour, Rect(x + 2, y + 2, xsize, ysize))
+        fontsize = (8 * self.ysize) // 10
+        font = pygame.font.Font(None, fontsize)
+        text = font.render(self.name(), 1, black)
+        textpos = text.get_rect()
+        textpos = textpos.move(x + (self.xsize // 4), y + (self.ysize // 4))
+        surf.blit(text, textpos)
+
+    def name(self):
+        return self._name
+
+    def hitbox(self):
+        return self._hitbox
+
+
+class Board:
+    def __init__(self, background, color_out, color_in, size, cent_size, xcord, ycord, font_size):
+        self.background = background
+        self.size = size
+        self.xcord = xcord
+        self.ycord = ycord
+        self.color_out = color_out
+        self.color_in = color_in
+        self.center_size = cent_size
+        self.font_size = font_size
+
+    def draw(self):
+        surf = self.background
+        left = self.xcord
+        top = self.ycord
+        size = self.size
+        cent = self.center_size
+        color_out = self.color_out
+        color_in = self.color_in
+        move = (size - cent) // 2
+        pygame.draw.rect(surf, black, Rect(left, top, size, size), 4)
+        pygame.draw.rect(surf, color_out, Rect(left + 2, top + 2, size - 4, size - 4))
+        pygame.draw.rect(surf, color_in, Rect(left + move, top + move, cent, cent))
+        self.draw_name()
+
+    def draw_name(self):
+        font = pygame.font.Font(None, self.font_size)
+        text = font.render("Monopoly", 1, monopoly_txt)
+        textpos = text.get_rect()
+        x = self.xcord + (self.size // 2)
+        y = self.ycord + (self.size // 2)
+        textpos = textpos.move(x, y)
+        self.background.blit(text, textpos)
+
+
+class Pon:
+    def __init__(self, colour, owner, x, y):
+        self.xcord = x
+        self.ycord = y
+        self._colour = colour
+        self._owner = owner
+        owner.set_pon(self)
+
+    def colour(self):
+        return self._colour
+
+    def owner(self):
+        return self._owner
+
+    def draw(self):
+        pass
+
+    def move(self):
+        pass
+
+
+class Position:
+    def __init__(self, xval, yval, x_size, y_size=None):
+        self.xval = xval
+        self.yval = yval
+        self.x_size = x_size
+        if not y_size:
+            self.y_size = self.x_size
+        else:
+            self.y_size = y_size
+
+
+class Corner(Position):
+    pass
+
+
+class Normal_Square(Position):
+    pass
+
 
 def draw_card(background):
     pygame.draw.rect(background, black, Rect(174, 410, 250, 400), 4)
+
 
 def main(players, database):
     # Initialise screen
@@ -87,6 +238,14 @@ def main(players, database):
     background = pygame.Surface(screen.get_size())
     background = background.convert()
     background.fill((color))
+
+    pygame.draw.rect(background, score, Rect(1420, 80, 400, 800))
+    pygame.draw.rect(background, score, Rect(100, 80, 400, 800))
+    pygame.draw.rect(background, black, Rect(1420, 80, 400, 800), 3)
+    pygame.draw.rect(background, black, Rect(100, 80, 400, 800), 3)
+    pygame.draw.rect(background, black, Rect(1420, 80, 400, 100), 3)
+    pygame.draw.rect(background, black, Rect(100, 80, 400, 100), 3)
+
     
 
     pygame.draw.rect(background, black, Rect(560, 80, 800, 800), 4)
@@ -205,12 +364,7 @@ def main(players, database):
 
     """Score_tabel"""
     
-    pygame.draw.rect(background, score, Rect(1420, 80, 400, 800))
-    pygame.draw.rect(background, score, Rect(100, 80, 400, 800))
-    pygame.draw.rect(background, black, Rect(1420, 80, 400, 800), 3)
-    pygame.draw.rect(background, black, Rect(100, 80, 400, 800), 3)
-    pygame.draw.rect(background, black, Rect(1420, 80, 400, 100), 3)
-    pygame.draw.rect(background, black, Rect(100, 80, 400, 100), 3)
+    
 
     """Players title"""
     font = pygame.font.Font(None, 50)
@@ -256,8 +410,8 @@ def main(players, database):
     clock = pygame.time.Clock()
     FPS = 30
     
-    bt = Button("Kup", 50, 400, 100, 20, white)
-    bt.draw(background)
+    bt = Button("Kup",background, 50, 400, 100, 20, white)
+    bt.draw()
 
     # Blit everything to the screen
     screen.blit(background, (0, 0))
@@ -269,12 +423,12 @@ def main(players, database):
             if event.type == QUIT:
                 return
         for player in players:
-            Player_name(player, background)
-            Player_info(players, background)
+            # Player_name(player, background)
+            # Player_info(players, background)
             screen.blit(background, (0, 0))
             pygame.display.flip()
             while player.throws() != 0 and player.pause() == 0:
-                Player_info(players, background)
+                # Player_info(players, background)
                 try:
                     player.throw_dices()
                     pos = player.position()
