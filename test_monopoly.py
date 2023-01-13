@@ -1,6 +1,9 @@
 import pytest
 from monopoly import Square, Property, Area, Player
-from monopoly import Dices, dice_throw, Special_Square
+from monopoly import Dices, Special_Square
+from monopoly_exeptions import WrongInputError, ZeroThrowsError
+from monopoly_exeptions import ZeroHousesError, NotEnoughtMoneyError
+from monopoly_exeptions import HousesNotEquallyError, HousesFullError
 
 """Tests for class Player"""
 
@@ -86,8 +89,8 @@ def test_subtract_money():
 
 def test_debit():
     player = Player("Marcin", 3000)
-    player.subtract_money(4000)
-    assert player.debit() is True
+    with pytest.raises(NotEnoughtMoneyError):
+        player.subtract_money(4000)
 
 
 def test_position_diff():
@@ -215,27 +218,19 @@ def test_pledge():
 
 def test_set_pledge():
     poland = Area("Poland")
-    Warszawa = Property("Warszawa", 3, 230, 150, poland)
+    player = Player("admin", 4000)
+    Warszawa = Property("Warszawa", 3, 230, 150, poland, player)
     Warszawa.set_pledge(True)
     assert Warszawa.pledge() is True
 
 
 def test_buy_house():
     poland = Area("Poland")
-    Warszawa = Property("Warszawa", 3, 230, 150, poland)
     player = Player("admin", 4000)
+    Warszawa = Property("Warszawa", 3, 230, 150, poland, player)
     Warszawa.buy(player)
     Warszawa.buy_house()
     assert Warszawa.houses() == 1
-
-
-def test_buy_houses():
-    poland = Area("Poland")
-    Warszawa = Property("Warszawa", 3, 230, 150, poland)
-    player = Player("admin", 4000)
-    Warszawa.buy(player)
-    Warszawa.buy_house(3)
-    assert Warszawa.houses() == 3
 
 
 def test_sell_houses():
@@ -243,9 +238,9 @@ def test_sell_houses():
     Warszawa = Property("Warszawa", 3, 230, 150, poland)
     player = Player("admin", 4000)
     Warszawa.buy(player)
-    Warszawa.buy_house(3)
-    Warszawa.sell_house(2)
-    assert Warszawa.houses() == 1
+    Warszawa.buy_house()
+    Warszawa.sell_house()
+    assert Warszawa.houses() == 0
 
 
 def test_buy_property():
@@ -274,7 +269,7 @@ def test_area_init():
     area = Area("Poland")
     Warszawa = Property("Warszawa", 3, 230, 150, area)
     Gdańsk = Property("Gdańsk", 2, 200, 150, area)
-    assert area.area() == [Warszawa, Gdańsk]
+    assert area.area_properties() == [Warszawa, Gdańsk]
 
 
 def test_check_if_fully_occupied():
@@ -319,9 +314,10 @@ def test_set_zero_throws():
 
 def test_dice_throw():
     """test if randint returns two intiger numbers"""
-    list = dice_throw()
-    assert len(list) == 2
-    for number in list:
+    dice = Dices()
+    throw = dice.dice_throw()
+    assert len(throw) == 2
+    for number in throw:
         assert isinstance(number, int)
 
 

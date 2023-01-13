@@ -1,14 +1,22 @@
-def ZeroThrowsError(Exeption):
+class ZeroThrowsError(Exception):
     pass
 
 
-def WrongInputError(Exeption):
+class WrongInputError(Exception):
     pass
 
 
-def LessThanRequiredError(Exeption):
+class ZeroHousesError(Exception):
     pass
 
 
-def NotEnoughtMoneyError(Exeption):
+class NotEnoughtMoneyError(Exception):
+    pass
+
+
+class HousesFullError(Exception):
+    pass
+
+
+class HousesNotEquallyError(Exception):
     pass

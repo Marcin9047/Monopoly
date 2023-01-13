@@ -1,4 +1,6 @@
-from monopoly_exeptions import WrongInputError, ZeroThrowsError, LessThanRequiredError, NotEnoughtMoneyError
+from monopoly_exeptions import WrongInputError, ZeroThrowsError
+from monopoly_exeptions import ZeroHousesError, NotEnoughtMoneyError
+from monopoly_exeptions import HousesNotEquallyError, HousesFullError
 from random import randint
 
 
@@ -36,21 +38,19 @@ class Dices:
     def throw_dices(self):
         if self._throws != 0 and self.pause() == 0:
             self._throws -= 1
-            x, y = dice_throw()
-            if not self.check_dublet(x, y):
-                self.set_zero_dublets()
+            x, y = self.dice_throw()
             if self.dublets() != 3:
                 self.move_forward(x + y)
             else:
                 pos(30).do_action(self)
+            self.set_zero_dublets()
         else:
             raise ZeroThrowsError
 
-
-def dice_throw():
-    x = randint(1, 6)
-    y = randint(1, 6)
-    return [x, y]
+    def dice_throw(self):
+        x = randint(1, 6)
+        y = randint(1, 6)
+        return [x, y]
 
 
 class Player(Dices):
@@ -114,7 +114,13 @@ class Player(Dices):
         self._money += value
 
     def subtract_money(self, value):
+        if self.check_debit(value):
+            raise NotEnoughtMoneyError
         self._money -= value
+
+    def check_debit(self, value):
+        money_after = self.money() - value
+        return money_after < 0
 
     def debit(self):
         return self._money < 0
@@ -176,6 +182,7 @@ class Property(Square):
         self._houses = houses
         self._pledge = False
         self._area.add_property(self)
+        self._house_cost = self.house_cost()
 
     def name(self):
         return self._name
@@ -196,11 +203,12 @@ class Property(Square):
         return self._rent
 
     def pay_rent(self, player):
-        player.subtract_money(self.rent())
-        while player.debit():
-            "To be written"
-            pass
-        self.owner().add_money(self.rent())
+        value = self.rent()
+        if player.check_debit(value):
+            raise NotEnoughtMoneyError
+        player.subtract_money(value)
+        if self.pledge() is False:
+            self.owner().add_money(value)
 
     def area(self):
         return self._area
@@ -211,28 +219,52 @@ class Property(Square):
     def owner(self):
         return self._owner
 
-    def set_pledge(self, value):
+    def set_pledge(self, value=True):
         if self.pledge() == value:
-            raise WrongInputError(f"Pledge is already set {value}")
+            raise WrongInputError
         else:
-            self._pledge = value
+            pld_money = self.price() // 2
+            if value:
+                self.owner().add_money(pld_money)
+                self._pledge = True
+            else:
+                self.owner().subtract_money(pld_money)
+                self._pledge = True
 
     def pledge(self):
         return self._pledge
 
-    def buy_house(self, number=1):
-        if self.owner().money() < 200:
-            raise NotEnoughtMoneyError
-        self._houses += number
-        self.owner().subtract_money(200)
-        self.increase_rent(50)
+    def house_cost(self):
+        side = (self.position() // 10) + 1
+        return 100 * side
 
-    def sell_house(self, number=1):
-        if self._houses < number:
-            raise LessThanRequiredError
+    def check_house_cost(self):
+        return self._house_cost
+
+    def buy_house(self):
+        if self.houses == 4:
+            raise HousesFullError
+        cost = self.check_house_cost()
+        if self.owner().check_debit(cost):
+            raise NotEnoughtMoneyError
+        for property in self.area().area_properties():
+            if property.houses() < self.houses():
+                raise HousesNotEquallyError
+        self._houses += 1
+        increase = (5 * self.rent()) // 10
+        if self.houses() <= 2:
+            self.owner().subtract_money(cost)
+            self.increase_rent(increase)
         else:
-            self._houses -= number
-            self.owner().add_money(150)
+            self.owner().subtract_money(2 * cost)
+            self.increase_rent(2 * increase)
+
+    def sell_house(self):
+        if self._houses == 0:
+            raise ZeroHousesError
+        else:
+            self._houses -= 1
+            self.owner().add_money(self.house_cost())
 
     def houses(self):
         return self._houses
@@ -244,7 +276,7 @@ class Property(Square):
         owner.subtract_property(self)
 
     def buy(self, player):
-        if player.money() < self.price():
+        if player.check_debit(self.price()):
             raise NotEnoughtMoneyError
         self.set_owner(player)
         player.subtract_money(self.price())
@@ -258,7 +290,6 @@ class Area:
     def __init__(self, name):
         self._name = name
         self._list_of_properties = []
-        self._colour = 0
 
     def set_colour(self, colour):
         self._colour = colour
@@ -273,12 +304,12 @@ class Area:
         return self._name
 
     def check_if_fully_occupied(self, player):
-        for property in self.area():
+        for property in self.area_properties():
             if property.owner() != player:
                 return False
         return True
 
-    def area(self):
+    def area_properties(self):
         return self._list_of_properties
 
 
