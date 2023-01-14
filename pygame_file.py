@@ -16,19 +16,19 @@ prop_color = (210, 210, 210)
 deck_cen = (80, 80, 80)
 
 
-
-
 class Player_name_title():
-    def __init__(self, background, color):
+    def __init__(self, background, color, top, font_size):
+        self.font_size = font_size
+        self.top = top
         self.background = background
         self.color = color
 
     def draw(self, player):
-        font = pygame.font.Font(None, 50)
+        font = pygame.font.Font(None, self.font_size)
         text = font.render(player.name(), 1, self.color)
         textpos = text.get_rect()
         textpos.centerx = self.background.get_rect().centerx
-        textpos = textpos.move(0, 20)
+        textpos = textpos.move(0, self.top)
         self.background.blit(text, textpos)
 
     def clear(self):
@@ -37,7 +37,7 @@ class Player_name_title():
 
 
 class Side_Table:
-    def __init__(self, backgr, color, sizex, sizey, xcord, ycord, title_hight):
+    def __init__(self, backgr, color, sizex, sizey, xcord, ycord, title_hight, font, name):
         self.background = backgr
         self.sizex = sizex
         self.sizey = sizey
@@ -45,6 +45,11 @@ class Side_Table:
         self.ycord = ycord
         self.color = color
         self.title_hight = title_hight
+        self.title_font = font
+        self._name = name
+
+    def name(self):
+        return self._name
 
     def clear_score(background):
         pygame.draw.rect(background, score, Rect(1425, 200, 380, 650))
@@ -61,6 +66,18 @@ class Side_Table:
         pygame.draw.rect(self.background, self.color, main)
         pygame.draw.rect(self.background, black, main, 3)
         pygame.draw.rect(self.background, black, title, 3)
+        self.draw_title()
+
+    def draw_title(self):
+        fontsize = self.title_font
+        name = self.name()
+        font = pygame.font.Font(None, fontsize)
+        text = font.render(name, 1, black)
+        textpos = text.get_rect()
+        x = self.xcord + (self.sizex // 3)
+        y = self.ycord + (self.title_hight // 2) - (fontsize // 2)
+        textpos = textpos.move(x, y)
+        self.background.blit(text, textpos)
 
     def set_hitbox(self, rect):
         self._hitbox = rect
@@ -69,9 +86,9 @@ class Side_Table:
         return self._hitbox
 
 
-class Score_text(Side_Table):
-    def __init__(self, players, backgr, color, sizex, sizey, xcord, ycord, title_hight):
-        super().__init__(backgr, color, sizex, sizey, xcord, ycord, title_hight)
+class Score(Side_Table):
+    def __init__(self, players, backgr, color, sizex, sizey, xcord, ycord, title_hight, font):
+        super().__init__(backgr, color, sizex, sizey, xcord, ycord, title_hight, font, "Players")
         self.players = players
 
     def line(self, player):
@@ -96,9 +113,9 @@ class Score_text(Side_Table):
             self.background.blit(text, textpos)
 
 
-class Action_Text(Side_Table):
-    def __init__(self, backgr, data, color, sizex, sizey, xcord, ycord, title_hight):
-        super().__init__(self, backgr, color, sizex, sizey, xcord, ycord, title_hight)
+class Action(Side_Table):
+    def __init__(self, backgr, data, color, sizex, sizey, xcord, ycord, title_hight, font):
+        super().__init__(backgr, color, sizex, sizey, xcord, ycord, title_hight, font, "Action")
         self.data = data
         self._buttons = []
 
@@ -113,7 +130,7 @@ class Action_Text(Side_Table):
         pygame.draw.rect(self.background, black, Rect(174, 410, 250, 400), 4)
 
 
-class Button(Action_Text):
+class Button(Action):
     def __init__(self, name, surf, xval, yval, xsize, ysize, colour):
         self.surface = surf
         self._name = name
@@ -177,9 +194,9 @@ class Board:
         font = pygame.font.Font(None, self.font_size)
         text = font.render("Monopoly", 1, monopoly_txt)
         textpos = text.get_rect()
-        x = self.xcord + (self.size // 2)
-        y = self.ycord + (self.size // 2)
-        textpos = textpos.move(x, y)
+        textpos.centerx = self.background.get_rect().centerx
+        y = self.ycord + (self.size // 2) - (self.font_size // 2)
+        textpos = textpos.move(0, y)
         self.background.blit(text, textpos)
 
 
@@ -239,20 +256,18 @@ def main(players, database):
     background = background.convert()
     background.fill((color))
 
-    pygame.draw.rect(background, score, Rect(1420, 80, 400, 800))
-    pygame.draw.rect(background, score, Rect(100, 80, 400, 800))
-    pygame.draw.rect(background, black, Rect(1420, 80, 400, 800), 3)
-    pygame.draw.rect(background, black, Rect(100, 80, 400, 800), 3)
-    pygame.draw.rect(background, black, Rect(1420, 80, 400, 100), 3)
-    pygame.draw.rect(background, black, Rect(100, 80, 400, 100), 3)
+    """To be changed"""
+    score_table = Score(["Marcin"], background, score, 400, 800, 1420, 80, 100, 50)
+    score_table.draw()
+    action_table = Action(background, "data", score, 400, 800, 100, 80, 100, 50)
+    action_table.draw()
 
-    
+    board = Board(background, prop_color, deck_cen, 800, 596, 560, 80, 70)
+    board.draw()
 
-    pygame.draw.rect(background, black, Rect(560, 80, 800, 800), 4)
-    pygame.draw.rect(background, prop_color, Rect(562, 82, 796, 796))
-    pygame.draw.rect(background, deck_cen, Rect(662, 182, 596, 596))
+    bt = Button("Kup", background, 50, 400, 100, 20, white)
+    bt.draw()
 
-    pygame.draw.rect(background, black, Rect(560, 776, 104, 104), 2)
     pygame.draw.rect(background, special, Rect(560 + 2, 776 + 2, 100, 100))
     move = 556 + 596 + 104
     pygame.draw.rect(background, black, Rect(move, 776, 104, 104), 2)
@@ -282,13 +297,9 @@ def main(players, database):
             pygame.draw.rect(background, special, Rect(move, move_up + 36 + move_blk, 104, 68))
         pygame.draw.rect(background, black, Rect(move, move_up + 36 + move_blk, 104, 68), 2)
 
-    
-
     """Square names"""
-
-    """corners"""
     font = pygame.font.Font(None, 20)
-    
+
     for i in range(4):
         sqr = database[10 * i]
         text = font.render(sqr.name(), 1, black)
@@ -303,7 +314,6 @@ def main(players, database):
             textpos = textpos.move(0, -742)
         background.blit(text, textpos)
 
-
     """0 - 10"""
     font = pygame.font.Font(None, 15)
     for i in range(1, 10):
@@ -315,7 +325,7 @@ def main(players, database):
         text = font.render(line, 1, black)
         textpos = text.get_rect()
         textpos.centerx = background.get_rect().centerx
-        textpos = textpos.move( 332 - move_txt, 805)
+        textpos = textpos.move(332 - move_txt, 805)
         background.blit(text, textpos)
 
     """10 - 20"""
@@ -329,7 +339,7 @@ def main(players, database):
         text = pygame.transform.rotate(text, 270)
         textpos = text.get_rect()
         textpos.centerx = background.get_rect().centerx
-        textpos = textpos.move( -332, 790 - move_txt)
+        textpos = textpos.move(-332, 790 - move_txt)
         background.blit(text, textpos)
 
     """20 - 30"""
@@ -343,7 +353,7 @@ def main(players, database):
         text = pygame.transform.rotate(text, 180)
         textpos = text.get_rect()
         textpos.centerx = background.get_rect().centerx
-        textpos = textpos.move( -328 + move_txt, 145)
+        textpos = textpos.move(-328 + move_txt, 145)
         background.blit(text, textpos)
 
     """30 - 40"""
@@ -359,38 +369,8 @@ def main(players, database):
         textpos.centerx = background.get_rect().centerx
         textpos = textpos.move(332, 125 + move_txt)
         background.blit(text, textpos)
-    
-    
-
-    """Score_tabel"""
-    
-    
-
-    """Players title"""
-    font = pygame.font.Font(None, 50)
-    text = font.render("Players", 1, black)
-    textpos = text.get_rect()
-    textpos.centerx = background.get_rect().centerx
-    textpos = textpos.move(650, 110)
-    background.blit(text, textpos)
-
-    """Action title"""
-    font = pygame.font.Font(None, 50)
-    text = font.render("Action", 1, black)
-    textpos = text.get_rect()
-    textpos.centerx = background.get_rect().centerx
-    textpos = textpos.move(-660, 110)
-    background.blit(text, textpos)
 
     draw_card(background)
-    """Game name"""
-    
-    font = pygame.font.Font(None, 90)
-    text = font.render("Monopoly", 1, monopoly_txt)
-    textpos = text.get_rect()
-    textpos.centerx = background.get_rect().centerx
-    textpos = textpos.move(0, 430)
-    background.blit(text, textpos)
 
     """Pons position"""
     xval = 1305
@@ -405,13 +385,6 @@ def main(players, database):
             y = 1
         pygame.draw.rect(background, black, Rect(xval + (20 * x), yval + (20 * y), 14, 14), 2)
         pygame.draw.rect(background, score, Rect(xval + 2 + (20 * x), yval + 2 + (20 * y), 10, 10))
-
-    """Pons move"""
-    clock = pygame.time.Clock()
-    FPS = 30
-    
-    bt = Button("Kup",background, 50, 400, 100, 20, white)
-    bt.draw()
 
     # Blit everything to the screen
     screen.blit(background, (0, 0))
@@ -436,7 +409,7 @@ def main(players, database):
                     if active_sqr.type() == "special":
                         active_sqr.do_action(player)
                     elif active_sqr.type() == "property":
-                        if active_sqr.owner() != None and active_sqr.owner() != player:
+                        if active_sqr.owner() is None and active_sqr.owner() != player:
                             print(active_sqr.owner().name())
                             active_sqr.pay_rent(player)
                             if player.bankrut():
@@ -468,10 +441,5 @@ def main(players, database):
         # pygame.display.flip()
 
 
-
-    
-    
-
-
-if __name__ == '__main__': main()
-
+if __name__ == '__main__':
+    main()
