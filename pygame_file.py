@@ -1,4 +1,5 @@
 import pygame
+from monopoly import Player, Property
 import sys
 from pygame.locals import *
 from pygame.locals import Rect
@@ -130,7 +131,7 @@ class Action(Side_Table):
 
 
 class Button(Action):
-    def __init__(self, name, surf, xval, yval, xsize, ysize, colour):
+    def __init__(self, name, surf, table, xval, yval, xsize, ysize, colour):
         self.surface = surf
         self._name = name
         self.xval = xval
@@ -138,6 +139,8 @@ class Button(Action):
         self.xsize = xsize
         self.ysize = ysize
         self.colour = colour
+        self.table = table
+        self.table.add_button(self)
 
     def name(self):
         return self._name
@@ -160,25 +163,23 @@ class Button(Action):
         textpos = textpos.move(x + (self.xsize // 4), y + (self.ysize // 4))
         surf.blit(text, textpos)
 
-    def active(self):
+    def activate(self, property, player):
         x = self.xval
         y = self.yval
         xsize = self.xsize
         ysize = self.ysize
         cur = pygame.mouse.get_pos()
-        click = pygame.mouse.get_pressed()
-        if x + xsize > cur[1] > x and y + ysize > cur[1] > y:
-            if click[0] == 1:
-                if self.name() == "Kup":
-                    pass
-                if self.name() == "Sprzedaj":
-                    pass
-                if self.name() == "Zastaw":
-                    pass
-                if self.name() == "Kup domek":
-                    pass
-                if self.name() == "Sprzedaj domek":
-                    pass
+        if x + xsize > cur[0] > x and y + ysize > cur[1] > y:
+            if self.name() == "Kup":
+                property.buy(player)
+            if self.name() == "Sprzedaj":
+                pass
+            if self.name() == "Zastaw":
+                pass
+            if self.name() == "Kup domek":
+                pass
+            if self.name() == "Sprzedaj domek":
+                pass
 
 
 class Board:
@@ -192,6 +193,26 @@ class Board:
         self.center_size = cent_size
         self.font_size = font_size
         self.corner_size = (self.size - self.center_size) // 2
+        self.pons = []
+
+    def add_pon(self, pon):
+        self.pons.append(pon)
+
+    def draw_pons(self):
+        for pon in self.pons:
+            pon.draw()
+
+    def find_start_pon_position(self):
+        for number, pon in enumerate(self.pons):
+            x = 0
+            y = 0
+            number = number + 1
+            if number % 2 == 0:
+                x = 1
+            if number > 2:
+                y = 1
+            pon.x_start += (20 * x)
+            pon.y_start += (20 * y)
 
     def draw(self):
         surf = self.background
@@ -238,7 +259,7 @@ class Board:
             x += move
             y += move
         return x, y
-    
+
     def draw_cards(self, database):
         background = self.background
         move = 556 + 596 + 104
@@ -263,13 +284,19 @@ class Board:
                 pygame.draw.rect(background, special, Rect(move, move_up + 36 + move_blk, 104, 68))
             pygame.draw.rect(background, black, Rect(move, move_up + 36 + move_blk, 104, 68), 2)
 
-class Pon:
-    def __init__(self, colour, owner, x, y):
-        self.xcord = x
-        self.ycord = y
+
+class player_pon(Board):
+    def __init__(self, board, colour, owner):
+        self.x_start = 1305
+        self.y_start = 820
+        self.board = board
         self._colour = colour
         self._owner = owner
         owner.set_pon(self)
+        board.add_pon(self)
+        self.board.find_start_pon_position()
+        self.x = self.x_start
+        self.y = self.y_start
 
     def colour(self):
         return self._colour
@@ -278,11 +305,42 @@ class Pon:
         return self._owner
 
     def draw(self):
-        pass
+        pygame.draw.rect(self.board.background, black, Rect(self.x, self.y, 14, 14), 2)
+        pygame.draw.rect(self.board.background, self.colour(), Rect(self.x + 2, self.y + 2, 10, 10))
 
     def move(self):
-        pass
+        pos = self.owner().position()
+        corner = self.board.corner_size
+        if pos // 10 == 0:
+            self.x = self.x_start - pos * self.board.center_size // 9
+            self.y = self.y_start
+        elif pos // 10 == 1:
+            move = pos - 10
+            self.x = self.x_start - self.board.center_size - corner
+            self.y = self.y_start - move * self.board.center_size // 9
+        elif pos // 10 == 2:
+            move = pos - 20
+            self.x = self.x_start - self.board.center_size - corner + pos * self.board.center_size // 9
+            self.y = self.y_start - self.board.center_size - corner
+        elif pos // 10 == 3:
+            self.x = self.x_start
+            self.y = self.y_start - self.board.center_size - corner + pos * self.board.center_size // 9
 
+        
+
+
+# xval = 1305
+#         yval = 820
+#         for number, player in enumerate(self.players):
+#             x = 0
+#             y = 0
+#             number = number + 1
+#             if number % 2 == 0:
+#                 x = 1
+#             if number > 2:
+#                 y = 1
+#             pygame.draw.rect(self.background, black, Rect(xval + (20 * x), yval + (20 * y), 14, 14), 2)
+#             pygame.draw.rect(self.background, score, Rect(xval + 2 + (20 * x), yval + 2 + (20 * y), 10, 10))
 
 class Positions:
     def __init__(self, surf, data, fontsize):
@@ -365,130 +423,65 @@ class Positions:
             background.blit(text, textpos)
 
 
+class main():
+    def __init__(self, players, database):
+        self.players = players
+        self.database = database
+        pygame.init()
+        self.screen = pygame.display.set_mode((1920, 1080))
+        pygame.display.set_caption('Monopoly')
+        self.background = pygame.Surface(self.screen.get_size())
+        self.background = self.background.convert()
+        self.background.fill((color))
+        self.board = Board(self.background, prop_color, deck_cen, 800, 596, 560, 80, 70)
+        for player in self.players:
+            pon = player_pon(self.board, white, player)
 
+    def clear(self):
+        self.background.fill((color))
 
+    def draw(self):
+        self.clear()
+        self.action_table = Action(self.background, "data", score, 400, 800, 100, 80, 100, 50)
+        self.action_table.draw()
+        self.board.draw()
+        self.board.draw_corner(1, white)
+        self.board.draw_corner(2, white)
+        self.board.draw_corner(3, white)
+        self.board.draw_corner(4, white)
+        self.board.draw_cards(self.database)
+        position = Positions(self.background, self.database, 20)
+        position.draw()
+        self.score_table = Score(self.players, self.background, score, 400, 800, 1420, 80, 100, 50)
+        self.score_table.draw()
+        self.score_table.draw_text()
+        bt = Button("Kup", self.background, self.action_table, 50, 400, 100, 20, white)
+        bt.draw()
+        self.board.draw_pons()
 
-# def draw_card(background):
-#     pygame.draw.rect(background, black, Rect(174, 410, 250, 400), 4)
+        self.screen.blit(self.background, (0, 0))
+        pygame.display.flip()
+        xval = 1305
+        yval = 820
+        for number, player in enumerate(self.players):
+            x = 0
+            y = 0
+            number = number + 1
+            if number % 2 == 0:
+                x = 1
+            if number > 2:
+                y = 1
+            pygame.draw.rect(self.background, black, Rect(xval + (20 * x), yval + (20 * y), 14, 14), 2)
+            pygame.draw.rect(self.background, score, Rect(xval + 2 + (20 * x), yval + 2 + (20 * y), 10, 10))
 
-
-def main(players, database):
-    # Initialise screen
-    pygame.init()
-    screen = pygame.display.set_mode((1920, 1080))
-    pygame.display.set_caption('Monopoly')
-    background = pygame.Surface(screen.get_size())
-    background = background.convert()
-    background.fill((color))
-    action_table = Action(background, "data", score, 400, 800, 100, 80, 100, 50)
-    action_table.draw()
-    board = Board(background, prop_color, deck_cen, 800, 596, 560, 80, 70)
-    board.draw()
-    board.draw_corner(1, white)
-    board.draw_corner(2, white)
-    board.draw_corner(3, white)
-    board.draw_corner(4, white)
-    board.draw_cards(database)
-    position = Positions(background, database, 20)
-    position.draw()
-    
-    
-
-    
-    
-
- 
-    """Square names"""
-    
-    
-    """Pons position"""
-    xval = 1305
-    yval = 820
-    for number, player in enumerate(players):
-        x = 0
-        y = 0
-        number = number + 1
-        if number % 2 == 0:
-            x = 1
-        if number > 2:
-            y = 1
-        pygame.draw.rect(background, black, Rect(xval + (20 * x), yval + (20 * y), 14, 14), 2)
-        pygame.draw.rect(background, score, Rect(xval + 2 + (20 * x), yval + 2 + (20 * y), 10, 10))
-    
-    score_table = Score(players, background, score, 400, 800, 1420, 80, 100, 50)
-    score_table.draw()
-    score_table.draw_text()
-
-    # Blit everything to the screen
-    screen.blit(background, (0, 0))
-    pygame.display.flip()
-
-
-    bt = Button("Kup", background, 50, 400, 100, 20, white)
-    bt.draw()
-
-
-    def do_action():
+    def do_action(self, player, property):
         paused = True
         while paused:
             for event in pygame.event.get():
-                print(event)
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                bt.active()
-                paused = False
-
-    game = True
-    while game:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                return
-        for player in players:
-            # Player_name(player, background)
-            # Player_info(players, background)
-            screen.blit(background, (0, 0))
-            pygame.display.flip()
-            while player.throws() != 0 and player.pause() == 0:
-                try:
-                    player.throw_dices()
-                    pos = player.position()
-                    active_sqr = database[pos]
-                    if active_sqr.type() == "special":
-                        active_sqr.do_action(player)
-                    elif active_sqr.type() == "property":
-                        if active_sqr.owner() is not None and active_sqr.owner() != player:
-                            print(active_sqr.owner().name())
-                            active_sqr.pay_rent(player)
-                            if player.bankrut():
-                                players.remove(player)
-                        elif active_sqr.owner() != player:
-                            text = input("Co chcesz zrobić")
-                            if text == "Kup":
-                                try:
-                                    active_sqr.buy(player)
-                                    pygame.display.flip()
-                                except NotEnoughtMoneyError():
-                                    print("Nie posiadasz wystarczających funduszy")
-                        elif active_sqr.area().check_if_fully_occupied(player):
-                            action = input("Możesz kupić domek, chcesz?: ")
-                            if action == "Tak":
-                                try:
-                                    active_sqr.buy_house()
-                                except NotEnoughtMoneyError():
-                                    print("Nie posiadasz wystarczających funduszy")
-                except:
-                    break
-            player.subtract_pause()
-            if player.pause() == 0:
-                player.add_throws()           
-
-
+                if event.type == pygame.MOUSEBUTTONUP:
+                    paused = False
+                    for button in self.action_table.buttons():
+                        button.activate(property, player)
     
-
-    
-                
-
-
-
-if __name__ == '__main__':
-    main()

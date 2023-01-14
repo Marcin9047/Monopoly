@@ -35,8 +35,11 @@ class Dices:
     def set_zero_throws(self):
         self._throws = 0
 
+    def ready_to_play(self):
+        return self.throws() != 0 and self.pause() == 0
+
     def throw_dices(self):
-        if self._throws != 0 and self.pause() == 0:
+        if self.ready_to_play():
             self._throws -= 1
             x, y = self.dice_throw()
             if self.dublets() != 3:
@@ -86,6 +89,7 @@ class Player(Dices):
         sum = 0
         for property in self.properties():
             sum += property.price()
+            sum += (property.houses() * property.check_house_cost())
         return sum
 
     def cards(self):
@@ -135,11 +139,13 @@ class Player(Dices):
         self._position += value
         if self.position() > 39:
             self._position -= 40
+        self.pon().move()
 
     def move_backward(self, value):
         self._position -= value
         if self.position() < 0:
             self._position = 40 + self.position()
+        self.pon().move()
 
     def pause(self):
         return self._pause
@@ -336,6 +342,6 @@ class Special_Square(Square):
         if self.name() == "Lotnisko":
             pass
         if self.name() == "Podatek":
-            player.subtract_money(self._value)
+            player.subtract_money(200)
         if self.name() == "Zarobek":
-            player.add_money(self._value)
+            player.add_money(300)
