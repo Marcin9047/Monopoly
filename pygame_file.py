@@ -9,15 +9,18 @@ from monopoly_exeptions import WrongInputError, ZeroThrowsError, NotEnoughtMoney
 """Colours"""
 black = (0, 0, 0)
 white = (255, 255, 255)
-monopoly_txt = (255, 153, 255)
-special = (155, 155, 155)
-score = (173, 186, 137)
-color = (250, 235, 215)
-prop_color = (210, 210, 210)
-deck_cen = (80, 80, 80)
+monopoly_txt = (60, 31, 129)
+special = (174, 195, 222)
+score = (93, 168, 116)
+color = (212, 242, 221)
+prop_color = (180, 174, 222)
+deck_cen = (111, 155, 115)
+button_color = (123, 129, 31)
+pons_color = (216, 29, 29)
+title_color = (60, 101, 64)
 
 
-class Player_name_title():
+class Player_name_title:
     def __init__(self, background, color, top, font_size):
         self.font_size = font_size
         self.top = top
@@ -433,9 +436,10 @@ class main():
         self.background = pygame.Surface(self.screen.get_size())
         self.background = self.background.convert()
         self.background.fill((color))
+        self.title = Player_name_title(self.background, title_color, 20, 70)
         self.board = Board(self.background, prop_color, deck_cen, 800, 596, 560, 80, 70)
         for player in self.players:
-            pon = player_pon(self.board, white, player)
+            pon = player_pon(self.board, pons_color, player)
 
     def clear(self):
         self.background.fill((color))
@@ -455,24 +459,43 @@ class main():
         self.score_table = Score(self.players, self.background, score, 400, 800, 1420, 80, 100, 50)
         self.score_table.draw()
         self.score_table.draw_text()
-        bt = Button("Kup", self.background, self.action_table, 50, 400, 100, 20, white)
-        bt.draw()
         self.board.draw_pons()
-
-        self.screen.blit(self.background, (0, 0))
         pygame.display.flip()
-        xval = 1305
-        yval = 820
-        for number, player in enumerate(self.players):
-            x = 0
-            y = 0
-            number = number + 1
-            if number % 2 == 0:
-                x = 1
-            if number > 2:
-                y = 1
-            pygame.draw.rect(self.background, black, Rect(xval + (20 * x), yval + (20 * y), 14, 14), 2)
-            pygame.draw.rect(self.background, score, Rect(xval + 2 + (20 * x), yval + 2 + (20 * y), 10, 10))
+
+    def draw_buttons(self, player):
+        self.buttons(player)
+        for number, button in enumerate(self.act_buttons):
+            move = 60 * number
+            bt = Button(button, self.background, self.action_table, 150 + move, 220, 50, 20, button_color)
+            bt.draw()
+            self.screen.blit(self.background, (0, 0))
+            pygame.display.flip()
+
+    def draw_title(self, player):
+        self.title.draw(player)
+        pygame.display.flip()
+
+    def buttons(self, player):
+        list_of_buttons = []
+        database = self.database
+        active_sqr = database[player.position()]
+        if player.debit():
+            if player.value_of_properties() + player.money() < 0:
+                player.set_inactive()
+            else:
+                list_of_buttons.append("Sprzedaj")
+                list_of_buttons.append("Zastaw")
+                list_of_buttons.append("Sprzedaj domek")
+        elif active_sqr.type() == "property":
+            if active_sqr.owner() == player:
+                if active_sqr.area().check_if_fully_occupied(player):
+                    if not player.check_debit(active_sqr.check_house_cost()):
+                        list_of_buttons.append("Kup domek")
+            if not active_sqr.owner():
+                if not player.check_debit(active_sqr.price()):
+                    list_of_buttons.append("Kup")
+                    list_of_buttons.append("Pomiń")
+        self.act_buttons = list_of_buttons
 
     def do_action(self, player, property):
         paused = True
@@ -484,4 +507,5 @@ class main():
                     paused = False
                     for button in self.action_table.buttons():
                         button.activate(property, player)
+        pygame.display.flip()
     

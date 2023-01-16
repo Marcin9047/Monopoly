@@ -67,7 +67,7 @@ class Dices:
         else:
             raise ZeroThrowsError
 
-    def dice_throw(self)
+    def dice_throw(self):
         """Generates two random intigers"""
         x = randint(1, 6)
         y = randint(1, 6)
