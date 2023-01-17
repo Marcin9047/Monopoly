@@ -174,15 +174,35 @@ class Button(Action):
         cur = pygame.mouse.get_pos()
         if x + xsize > cur[0] > x and y + ysize > cur[1] > y:
             if self.name() == "Kup":
-                property.buy(player)
+                try:
+                    property.buy(player)
+                except:
+                    pass
             if self.name() == "Sprzedaj":
-                pass
+                try:
+                    property.sell()
+                except:
+                    pass
+            if self.name() == "Zapłać":
+                try:
+                    property.pay_rent(player)
+                except:
+                    pass
             if self.name() == "Zastaw":
-                pass
+                try:
+                    property.set_pledge()
+                except:
+                    pass
             if self.name() == "Kup domek":
-                pass
+                try:
+                    property.buy_house()
+                except:
+                    pass
             if self.name() == "Sprzedaj domek":
-                pass
+                try:
+                    property.sell_house()
+                except:
+                    pass
 
 
 class Board:
@@ -438,15 +458,20 @@ class main():
         self.background.fill((color))
         self.title = Player_name_title(self.background, title_color, 20, 70)
         self.board = Board(self.background, prop_color, deck_cen, 800, 596, 560, 80, 70)
+        self.act_buttons = []
         for player in self.players:
             pon = player_pon(self.board, pons_color, player)
+
+    def add_button(self, name):
+        self.act_buttons.append(name)
 
     def clear(self):
         self.background.fill((color))
 
     def draw(self):
         self.clear()
-        self.action_table = Action(self.background, "data", score, 400, 800, 100, 80, 100, 50)
+        self.action_table = Action(self.background, "data", score, 400, 800,
+                                   100, 80, 100, 50)
         self.action_table.draw()
         self.board.draw()
         self.board.draw_corner(1, white)
@@ -464,12 +489,13 @@ class main():
 
     def draw_buttons(self, player):
         self.buttons(player)
-        for number, button in enumerate(self.act_buttons):
-            move = 60 * number
-            bt = Button(button, self.background, self.action_table, 150 + move, 220, 50, 20, button_color)
-            bt.draw()
-            self.screen.blit(self.background, (0, 0))
-            pygame.display.flip()
+        if len(self.act_buttons) != 0:
+            for number, button in enumerate(self.act_buttons):
+                move = 60 * number
+                bt = Button(button, self.background, self.action_table, 150 + move, 220, 50, 20, button_color)
+                bt.draw()
+                self.screen.blit(self.background, (0, 0))
+                pygame.display.flip()
 
     def draw_title(self, player):
         self.title.draw(player)
@@ -495,11 +521,13 @@ class main():
                 if not player.check_debit(active_sqr.price()):
                     list_of_buttons.append("Kup")
                     list_of_buttons.append("Pomiń")
-        self.act_buttons = list_of_buttons
+        self.act_buttons.extend(list_of_buttons)
 
     def do_action(self, player, property):
+        self.draw_buttons(player)
+        buttons = self.act_buttons
         paused = True
-        while paused:
+        while paused and len(buttons) != 0:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -507,5 +535,6 @@ class main():
                     paused = False
                     for button in self.action_table.buttons():
                         button.activate(property, player)
+                    self.act_buttons = []
         pygame.display.flip()
     

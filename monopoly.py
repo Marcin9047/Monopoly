@@ -117,7 +117,7 @@ class Player(Dices):
         self._properties.append(prop)
 
     def subtract_property(self, prop):
-        """Removes property from player properties list>
+        """Removes property from player properties list
             Input: Property object
         """
         self._properties.remove(prop)
@@ -183,7 +183,7 @@ class Player(Dices):
 
     def debit(self):
         """Returns true if player money < 0"""
-        return self._money < 0
+        return self.money() < 0
 
     def position(self):
         return self._position
@@ -198,6 +198,7 @@ class Player(Dices):
         """
         self._position += value
         if self.position() > 39:
+            self.add_money(300)
             self._position -= 40
         self.pon().move()
 
@@ -312,8 +313,8 @@ class Property(Square):
         reaises NotEnoughtMoneyError if player is unable to pay
         """
         value = self.rent()
-        if player.check_debit(value):
-            raise NotEnoughtMoneyError
+        # if player.check_debit(value):
+        #     raise NotEnoughtMoneyError
         player.subtract_money(value)
         if self.pledge() is False:
             self.owner().add_money(value)
@@ -480,8 +481,6 @@ class Special_Square(Square):
 
         if self.name() == "Idziesz do więzienia":
             player.set_pause(3)
-        if self.name() == "Start":
-            player.add_money(300)
         if self.name() == "Lotnisko":
             pass
         if self.name() == "Podatek":
