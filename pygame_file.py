@@ -397,11 +397,19 @@ class Positions:
             if database[i].type() == "property":
                 pygame.draw.rect(background, black, Rect(1256 - move_txt, 776,  68, 25,), 2)
                 pygame.draw.rect(background, database[i].area().colour(), Rect(1258 - move_txt, 778, 64, 21))
+                if database[i].owner():
+                    line2 = database[i].owner().name()
+                    text2 = font.render(line2, 1, black)
+                    textpos = text2.get_rect()
+                    textpos.centerx = background.get_rect().centerx
+                    textpos = textpos.move(332 - move_txt, 855)
+                    background.blit(text2, textpos)
             text = font.render(line, 1, black)
             textpos = text.get_rect()
             textpos.centerx = background.get_rect().centerx
             textpos = textpos.move(332 - move_txt, 805)
             background.blit(text, textpos)
+            
 
         """10 - 20"""
         for i in range(1, 10):
@@ -410,12 +418,21 @@ class Positions:
             if database[i + 10].type() == "property":
                 pygame.draw.rect(background, black, Rect(639, 776 - move_txt, 25, 68), 2)
                 pygame.draw.rect(background, database[i + 10].area().colour(), Rect(641, 778 - move_txt, 21, 64))
+                if database[i + 10].owner():
+                    line2 = database[i + 10].owner().name()
+                    text2 = font.render(line2, 1, black)
+                    text2 = pygame.transform.rotate(text2, 270)
+                    textpos = text2.get_rect()
+                    textpos.centerx = background.get_rect().centerx
+                    textpos = textpos.move(-382, 790 - move_txt)
+                    background.blit(text2, textpos)
             text = font.render(line, 1, black)
             text = pygame.transform.rotate(text, 270)
             textpos = text.get_rect()
             textpos.centerx = background.get_rect().centerx
             textpos = textpos.move(-332, 790 - move_txt)
             background.blit(text, textpos)
+            
 
         """20 - 30"""
         for i in range(1, 10):
@@ -424,12 +441,21 @@ class Positions:
             if database[i + 20].type() == "property":
                 pygame.draw.rect(background, black, Rect(596 + move_txt, 159,  68, 25,), 2)
                 pygame.draw.rect(background, database[i + 20].area().colour(), Rect(598 + move_txt, 161, 64, 21))
+                if database[i + 20].owner():
+                    line2 = database[i + 20].owner().name()
+                    text2 = font.render(line2, 1, black)
+                    text2 = pygame.transform.rotate(text2, 180)
+                    textpos = text2.get_rect()
+                    textpos.centerx = background.get_rect().centerx
+                    textpos = textpos.move(-328 + move_txt, 95)
+                    background.blit(text2, textpos)
             text = font.render(line, 1, black)
             text = pygame.transform.rotate(text, 180)
             textpos = text.get_rect()
             textpos.centerx = background.get_rect().centerx
             textpos = textpos.move(-328 + move_txt, 145)
             background.blit(text, textpos)
+            
 
         """30 - 40"""
         for i in range(1, 10):
@@ -438,13 +464,21 @@ class Positions:
             if database[i + 30].type() == "property":
                 pygame.draw.rect(background, black, Rect(1256, 116 + move_txt, 25, 68), 2)
                 pygame.draw.rect(background, database[i + 30].area().colour(), Rect(1258, 118 + move_txt, 21, 64))
+                if database[i + 30].owner():
+                    line2 = database[i + 30].owner().name()
+                    text2 = font.render(line2, 1, black)
+                    text2 = pygame.transform.rotate(text2, 90)
+                    textpos = text2.get_rect()
+                    textpos.centerx = background.get_rect().centerx
+                    textpos = textpos.move(382, 125 + move_txt)
+                    background.blit(text2, textpos)
             text = font.render(line, 1, black)
             text = pygame.transform.rotate(text, 90)
             textpos = text.get_rect()
             textpos.centerx = background.get_rect().centerx
             textpos = textpos.move(332, 125 + move_txt)
             background.blit(text, textpos)
-
+            
 
 class main():
     def __init__(self, players, database):

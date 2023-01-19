@@ -2,31 +2,31 @@
     "Polska": {
         "Warszawa": {
             "position": "3",
-            "price": "320",
-            "rent": "150"
+            "price": "160",
+            "rent": "70"
         },
         "Kraków": {
             "position": "1",
-            "price": "340",
-            "rent": "150"
+            "price": "140",
+            "rent": "50"
         },
         "colour": "144, 144, 144"
         },
     "Niemcy": {
         "Berlin": {
             "position": "29",
-            "price": "320",
-            "rent": "150"
+            "price": "450",
+            "rent": "270"
         },
         "Hamburg": {
             "position": "26",
-            "price": "320",
-            "rent": "150"
+            "price": "420",
+            "rent": "240"
         },
         "Monachium": {
             "position": "27",
-            "price": "320",
-            "rent": "150"
+            "price": "400",
+            "rent": "220"
         },
         "colour": "55, 242, 161"
     },
@@ -34,34 +34,34 @@
         "Paryż": {
             "position": "19",
             "price": "320",
-            "rent": "150"
+            "rent": "210"
         },
         "Lyon": {
             "position": "18",
-            "price": "320",
-            "rent": "150"
+            "price": "300",
+            "rent": "200"
         },
         "Nanntes": {
             "position": "16",
-            "price": "320",
-            "rent": "150"
+            "price": "280",
+            "rent": "180"
         },
         "colour": "117, 98, 192"
     },
     "Wielka Brytania": {
         "Londyn": {
             "position": "14",
-            "price": "320",
-            "rent": "150"
+            "price": "300",
+            "rent": "190"
         },
         "York": {
             "position": "13",
-            "price": "320",
-            "rent": "150"
+            "price": "280",
+            "rent": "170"
         },
         "Glasgow": {
             "position": "11",
-            "price": "320",
+            "price": "270",
             "rent": "150"
         },
         "colour": "199, 122, 134"
@@ -69,67 +69,67 @@
     "Hiszpania": {
         "Madryt": {
             "position": "9",
-            "price": "320",
-            "rent": "150"
+            "price": "180",
+            "rent": "100"
         },
         "Barcelona": {
             "position": "8",
-            "price": "320",
-            "rent": "150"
+            "price": "180",
+            "rent": "90"
         },
         "Walencja": {
             "position": "6",
-            "price": "320",
-            "rent": "150"
+            "price": "160",
+            "rent": "70"
         },
         "colour": "183, 192, 98"
     },
     "USA": {
         "Nowy York": {
             "position": "39",
-            "price": "320",
-            "rent": "150"
+            "price": "650",
+            "rent": "400"
         },
         "Miami": {
             "position": "37",
-            "price": "320",
-            "rent": "150"
+            "price": "570",
+            "rent": "350"
         },
         "colour": "178, 102, 255"
     },
     "Włochy": {
         "Rzym": {
             "position": "24",
-            "price": "320",
-            "rent": "150"
+            "price": "360",
+            "rent": "230"
         },
         "Mediolan": {
             "position": "23",
-            "price": "320",
-            "rent": "150"
+            "price": "340",
+            "rent": "210"
         },
         "Neapol": {
             "position": "21",
             "price": "320",
-            "rent": "150"
+            "rent": "190"
         },
         "colour": "8, 16, 47 "
     },
     "Brazylia": {
         "Rio de Jan.": {
             "position": "34",
-            "price": "320",
-            "rent": "150"
+            "price": "510",
+            "rent": "320"
         },
         "Sao Paulo": {
             "position": "31",
-            "price": "320",
-            "rent": "150"
+            "price": "470",
+            "rent": "260"
         },
         "Brasilla": {
             "position": "32",
-            "price": "320",
-            "rent": "150"
+            "price": "490",
+            "rent": "300"
         },
         "colour": "156, 185, 151"
 

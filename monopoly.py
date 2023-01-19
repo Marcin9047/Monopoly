@@ -1,11 +1,12 @@
-from monopoly_exeptions import WrongInputError, ZeroThrowsError, NotOwnerOfEveryError
+from monopoly_exeptions import WrongInputError, ZeroThrowsError
+from monopoly_exeptions import NotOwnerOfEveryError
 from monopoly_exeptions import ZeroHousesError, NotEnoughtMoneyError
 from monopoly_exeptions import HousesNotEquallyError, HousesFullError
 from random import randint
 
 
 def pos(int):
-    from monopoly_run import squares
+    from main import squares
     return squares[int]
 
 
@@ -263,7 +264,7 @@ class Property(Square):
     Methods to: pay rent, buy/sell, increase/decrease rent, buy/sell houses,
     set pladge and set house cost
     """
-    def __init__(self, name, position, price, rent, area, owner=None, houses=0):
+    def __init__(self, name, position, price, rent, area, owner=None, house=0):
         """
         name: string
         position: intiger
@@ -282,7 +283,7 @@ class Property(Square):
         self._rent = rent
         self._area = area
         self._owner = owner
-        self._houses = houses
+        self._houses = house
         self._pledge = False
         self._area.add_property(self)
         self.set_house_cost()
@@ -307,7 +308,7 @@ class Property(Square):
 
     def pay_rent(self, player):
         """
-        Pays rent of the property to the owner or just 
+        Pays rent of the property to the owner or just
         subtract money if property is pladged
         input: Player class object
         reaises NotEnoughtMoneyError if player is unable to pay
@@ -358,7 +359,8 @@ class Property(Square):
         return self._house_cost
 
     def buy_house(self):
-        """Method to buy house ona property if player is an owner of every property in area
+        """Method to buy house ona property if
+        player is an owner of every property in area
             if not: rases NotOwnerOfEveryError
             if houses on property equal 4: property is full
             raises HousesFullError
@@ -413,6 +415,7 @@ class Property(Square):
         self.set_owner(player)
         player.subtract_money(self.price())
         player.add_property(self)
+
 
 class Area:
     """
