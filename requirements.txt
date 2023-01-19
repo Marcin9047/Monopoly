@@ -1,0 +1,54 @@
+Klasa nieruchomość z informacjami o położeniu, cenie kupna, czynszu, obszarze, posiadaczu, stanie, liczbie domków
+W inicie przyjmuje , nazwe obszaru, cene zakupu oraz czynsz
+Posiada funkcje sprzedaży , handlu, kupna oraz zastawu
+Dodatkowo umożliwia sprzedaż/zakup domku / hotelu w przypadku gdy gracz posiada wszystkie pola (hotel jeśli również na danej nieruchomości są już 4 domki)
+przy zakupie domku program sprawdza czy na innych polach obszaru jest min tyle domków co na tym przed zakupem
+stan to informacja czy nieruchomość jest zastawiona
+gettery i settery dla ceny kupna, czynszu, posiadacza, stanu, liczby domków
+cena nieruchomości z pola na pole rośnie procentowo
+
+Klasa obszar z informacjami o miastach wchodzcych w skład obszaru
+umożliwia sprawdzenie czy gracz posiada cały obszar
+
+klasa pole daje informacje o nieruchomości/polu specjalnym znajdującym się na danym miejscu
+umożliwia sprawdzenie co znajduje się w danym miejscu
+
+Słowniki obszarów i nieruchomość zamieszczone w oddzielnym pliku
+
+Klasa gracz posiada atrybuty nieruchomości, karty gracza, pieniądze, położenie,pauza oraz informacje czy gracz jest w rozgrywce
+dla nieruchomości/kart gracza/pieniedzy/położenia/pauzy dołączone są gettery, settery
+w przypadku pieniedzy pozwala odjąć i dodać jakąś wartość
+położenie daje informacje gdzie ma się znajdować gracz
+poza setterem można też dodać wartość żeby przejść o określoną ilość pól
+pozwala obliczyć sumę wartości nieruchomości
+jeśli po jakimś zjawisku ilość pieniedzy spadnie poniżej zera powinna wymuszać sprzedaż/zastaw
+Bankructwo następuje w przypadku gdy suma wartości nieruchomości jest mniejsza od długu
+
+klasa rzut kością określa ile jeszcze ma być wykonanych rzutów
+posiada getter, setter oraz możliwość dodania do liczby rzutów
+dublet zwieksza liczbe rzutów o 1
+niektóre pola wymuszają ograniczenie liczby rzutów
+
+pola spacjalne:
+
+Start zwieksza ilość pieniedzy gracza
+Lotnisko przenosi gracza w dowolnie wybrane miejsce
+Wiezienie ustawia pauze gracza oraz ilość rzutów dozwolonych 
+graccz ma określoną ilość rzutów, jeśli trafi dublet wychodzi i rzuca jeszcze raz
+jeśli nie może zapłacić albo poczekać do końca pauzy
+w przypadku posiadania klucza program pyta gracza czy chce go użyć żeby wyjść
+Pola podatków zmniejszają ilość pieniedzy gracza
+Parking jest pustym polem
+
+karty specjalne losują pewne sytuacje:
+w zależności od karty wpływają na pieniądze, nieruchomości domki i położenie graczy
+
+klasa gracze posiada informacje o graczach
+umożliwia dodanie i odjecie gracza
+zwraca informacje o każdym graczu i jego majątku co wykorzystuje sie przy tablicy końcowej
+
+gra trwa przez określoną liczbę tur albo do pozostania jednego gracza w rozgrywce
+
+gra wyświetlona jest graficznie, każde pole podpisane jest nazwą, aktualnym czynszem/ ceną zakupu oraz informacją o właścicielu.
+gracze widzą pozycje pionków a każdy gracz może zerknąć w swoje karty
+aktualny stan portfela każdego gracza wyswietlany jest z boku planszy
