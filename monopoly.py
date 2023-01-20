@@ -67,6 +67,7 @@ class Dices:
             self.set_zero_dublets()
         else:
             raise ZeroThrowsError
+        return x, y
 
     def dice_throw(self):
         """Generates two random intigers"""
@@ -201,7 +202,6 @@ class Player(Dices):
         if self.position() > 39:
             self.add_money(300)
             self._position -= 40
-        self.pon().move()
 
     def move_backward(self, value):
         """
@@ -211,7 +211,6 @@ class Player(Dices):
         self._position -= value
         if self.position() < 0:
             self._position = 40 + self.position()
-        self.pon().move()
 
     def pause(self):
         return self._pause
@@ -314,8 +313,8 @@ class Property(Square):
         reaises NotEnoughtMoneyError if player is unable to pay
         """
         value = self.rent()
-        # if player.check_debit(value):
-        #     raise NotEnoughtMoneyError
+        if player.check_debit(value):
+            raise NotEnoughtMoneyError
         player.subtract_money(value)
         if self.pledge() is False:
             self.owner().add_money(value)

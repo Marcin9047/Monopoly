@@ -1,7 +1,8 @@
 import pytest
-from monopoly import Square, Property, Area, Player
+from monopoly import Property, Area, Player
 from monopoly import Dices, Special_Square
-from monopoly_exeptions import WrongInputError, ZeroThrowsError, NotOwnerOfEveryError
+from monopoly_exeptions import WrongInputError, ZeroThrowsError
+from monopoly_exeptions import NotOwnerOfEveryError
 from monopoly_exeptions import ZeroHousesError, NotEnoughtMoneyError
 from monopoly_exeptions import HousesNotEquallyError, HousesFullError
 
@@ -301,11 +302,23 @@ def test_5_houses_on_property_already():
 def test_not_owner_of_full_area():
     poland = Area("Poland")
     player = Player("admin", 4000)
-    Warszawa = Property("Warszawa", 39, 230, 150, poland, player)
+    Warszawa = Property("Warszawa", 39, 230, 150, poland)
     Gdańsk = Property("Gdańsk", 2, 200, 150, poland)
     Warszawa.buy(player)
     assert Warszawa.check_house_cost() == 400
     with pytest.raises(NotOwnerOfEveryError):
+        Warszawa.buy_house()
+
+
+def test_not_equaly():
+    poland = Area("Poland")
+    player = Player("admin", 4000)
+    Warszawa = Property("Warszawa", 39, 230, 150, poland)
+    Gdańsk = Property("Gdańsk", 2, 200, 150, poland)
+    Warszawa.buy(player)
+    Gdańsk.buy(player)
+    Warszawa.buy_house()
+    with pytest.raises(HousesNotEquallyError):
         Warszawa.buy_house()
 
 
@@ -440,10 +453,3 @@ def test_specia_square_init():
     start = Special_Square("Start", 15)
     assert prison.position() == 7
     assert start.position() == 15
-
-
-def test_do_Start_action():
-    start = Special_Square("Start", 15)
-    player = Player("Marcin", 300)
-    start.do_action(player)
-    assert player.money() == 600

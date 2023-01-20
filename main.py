@@ -1,6 +1,7 @@
 from monopoly_logs import Database
 from monopoly import Player
 from pygame_file import main
+from monopoly_exeptions import NotEnoughtMoneyError
 
 prop = "/home/marcin9047/Programowanie - dom/monopoly/database.json"
 spc = "/home/marcin9047/Programowanie - dom/monopoly/Special_cards_database.json"
@@ -39,35 +40,43 @@ class Game:
                     while player.ready_to_play():
                         inter.draw()
                         inter.draw_title(player)
-                        player.throw_dices()
+                        inter.add_button(("Rzuć kośćmi", None))
+                        inter.do_action(player)
                         pos = player.position()
                         active_sqr = self.database()[pos]
                         if active_sqr.type() == "special":
-                            active_sqr.do_action(player)
+                            unsolved = True
+                            while unsolved:
+                                try:
+                                    active_sqr.do_action(player)
+                                    unsolved = False
+                                except NotEnoughtMoneyError:
+                                    inter.do_action(player, True)
                         elif active_sqr.type() == "property":
                             owner = active_sqr.owner()
                             if owner is not None and owner != player:
                                 print(active_sqr.owner().name())
-                                inter.add_button("Zapłać")
+                                inter.add_button(("Zapłać", active_sqr))
                         inter.draw()
                         inter.draw_title(player)
-                        inter.do_action(player, active_sqr)
+                        inter.do_action(player)
                     player.subtract_pause()
                     if player.pause() == 0:
                         player.add_throws()
                 else:
                     self._players.remove(player)
             if len(self.players()) == 1:
-                print(f'{self.players()} is a winner')
+                for player in self.players():
+                    print(f'{player.name()} is a winner')
 
 
 def players():
     players = []
     while True:
-        player = input()
+        player = input("Wprowadź nazwę gracza: ")
         if not player:
             break
-        player_cls = Player(player, 3000)
+        player_cls = Player(player, 1500)
         players.append(player_cls)
     return players
 

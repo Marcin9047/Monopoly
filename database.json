@@ -2,12 +2,12 @@
     "Polska": {
         "Warszawa": {
             "position": "3",
-            "price": "160",
+            "price": "360",
             "rent": "70"
         },
         "Kraków": {
             "position": "1",
-            "price": "140",
+            "price": "340",
             "rent": "50"
         },
         "colour": "144, 144, 144"
@@ -15,17 +15,17 @@
     "Niemcy": {
         "Berlin": {
             "position": "29",
-            "price": "450",
+            "price": "650",
             "rent": "270"
         },
         "Hamburg": {
             "position": "26",
-            "price": "420",
+            "price": "620",
             "rent": "240"
         },
         "Monachium": {
             "position": "27",
-            "price": "400",
+            "price": "600",
             "rent": "220"
         },
         "colour": "55, 242, 161"
@@ -33,17 +33,17 @@
     "Francja" : {
         "Paryż": {
             "position": "19",
-            "price": "320",
+            "price": "520",
             "rent": "210"
         },
         "Lyon": {
             "position": "18",
-            "price": "300",
+            "price": "500",
             "rent": "200"
         },
         "Nanntes": {
             "position": "16",
-            "price": "280",
+            "price": "480",
             "rent": "180"
         },
         "colour": "117, 98, 192"
@@ -51,7 +51,7 @@
     "Wielka Brytania": {
         "Londyn": {
             "position": "14",
-            "price": "300",
+            "price": "500",
             "rent": "190"
         },
         "York": {
@@ -61,7 +61,7 @@
         },
         "Glasgow": {
             "position": "11",
-            "price": "270",
+            "price": "470",
             "rent": "150"
         },
         "colour": "199, 122, 134"
@@ -69,17 +69,17 @@
     "Hiszpania": {
         "Madryt": {
             "position": "9",
-            "price": "180",
+            "price": "380",
             "rent": "100"
         },
         "Barcelona": {
             "position": "8",
-            "price": "180",
+            "price": "380",
             "rent": "90"
         },
         "Walencja": {
             "position": "6",
-            "price": "160",
+            "price": "360",
             "rent": "70"
         },
         "colour": "183, 192, 98"
@@ -87,12 +87,12 @@
     "USA": {
         "Nowy York": {
             "position": "39",
-            "price": "650",
+            "price": "950",
             "rent": "400"
         },
         "Miami": {
             "position": "37",
-            "price": "570",
+            "price": "770",
             "rent": "350"
         },
         "colour": "178, 102, 255"
@@ -100,17 +100,17 @@
     "Włochy": {
         "Rzym": {
             "position": "24",
-            "price": "360",
+            "price": "560",
             "rent": "230"
         },
         "Mediolan": {
             "position": "23",
-            "price": "340",
+            "price": "540",
             "rent": "210"
         },
         "Neapol": {
             "position": "21",
-            "price": "320",
+            "price": "520",
             "rent": "190"
         },
         "colour": "8, 16, 47 "
@@ -118,17 +118,17 @@
     "Brazylia": {
         "Rio de Jan.": {
             "position": "34",
-            "price": "510",
+            "price": "710",
             "rent": "320"
         },
         "Sao Paulo": {
             "position": "31",
-            "price": "470",
+            "price": "670",
             "rent": "260"
         },
         "Brasilla": {
             "position": "32",
-            "price": "490",
+            "price": "690",
             "rent": "300"
         },
         "colour": "156, 185, 151"
