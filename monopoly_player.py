@@ -1,6 +1,5 @@
 from monopoly import Dices
-from monopoly_exeptions import *
-
+from monopoly_exeptions import NotEnoughtMoneyError
 
 class Player(Dices):
     """

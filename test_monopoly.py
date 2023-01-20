@@ -1,6 +1,7 @@
 import pytest
-from monopoly import Property, Area, Player
-from monopoly import Dices, Special_Square
+from monopoly import Dices, Special_Square, Area
+from monopoly_property import Property
+from monopoly_player import Player
 from monopoly_exeptions import WrongInputError, ZeroThrowsError
 from monopoly_exeptions import NotOwnerOfEveryError
 from monopoly_exeptions import ZeroHousesError, NotEnoughtMoneyError

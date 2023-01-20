@@ -66,7 +66,7 @@ class Game:
                                         unsolved = False
                                     except NotEnoughtMoneyError:
                                         inter.draw()
-                                        inter.do_action(player, True)     
+                                        inter.do_action(player, True)
                         inter.draw()
                         inter.draw_title(player)
                         inter.do_action(player)

@@ -3,7 +3,6 @@ from monopoly_player import Player
 from monopoly_property import Property
 from pygame.locals import *
 from pygame.locals import Rect
-from monopoly_exeptions import WrongInputError, ZeroThrowsError, NotEnoughtMoneyError
 
 
 """Colours"""

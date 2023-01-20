@@ -1,6 +1,7 @@
 from monopoly import Square
 from monopoly_exeptions import *
 
+
 class Property(Square):
     """Class with the parameters of property on the board
     Super class: Square

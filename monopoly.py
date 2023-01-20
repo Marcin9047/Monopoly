@@ -72,6 +72,7 @@ class Dices:
         y = randint(1, 6)
         return [x, y]
 
+
 class Square:
     """Super class for every position on the board.
         Methods: type, position
