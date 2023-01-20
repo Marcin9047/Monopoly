@@ -6,6 +6,10 @@ from monopoly_exeptions import WrongInputError, ZeroThrowsError, NotEnoughtMoney
 
 
 """Colours"""
+blue = (66, 135, 245)
+red = (153, 28, 28)
+yellow = (184, 150, 48)
+green = (88, 184, 48)
 black = (0, 0, 0)
 white = (255, 255, 255)
 monopoly_txt = (60, 31, 129)
@@ -585,8 +589,10 @@ class main():
         self.title = Player_name_title(back, title_color, 20, 70)
         self.board = Board(back, prop_color, deck_cen, 800, 596, 560, 80, 70)
         self.act_buttons = []
-        for player in self.players:
-            pon = player_pon(self.board, pons_color, player)
+        pons_colors = [red, blue, yellow, green]
+        for number, player in enumerate(self.players):
+            pon_color = pons_colors[number]
+            pon = player_pon(self.board, pon_color, player)
 
     def add_button(self, name):
         self.act_buttons.append(name)
@@ -657,7 +663,7 @@ class main():
             if not active_sqr.owner():
                 if not player.check_debit(active_sqr.price()):
                     list_of_buttons.append(("Kup", active_sqr))
-                    list_of_buttons.append(("Pomiń", None))
+                list_of_buttons.append(("Pomiń", None))
         self.act_buttons.extend(list_of_buttons)
 
     def do_action(self, player, problem=False):
