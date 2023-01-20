@@ -3,8 +3,8 @@ from monopoly import Player
 from pygame_file import main
 from monopoly_exeptions import NotEnoughtMoneyError
 
-prop = "/home/marcin9047/Programowanie - dom/monopoly/database.json"
-spc = "/home/marcin9047/Programowanie - dom/monopoly/Special_cards_database.json"
+prop = "monopoly/database.json"
+spc = "monopoly/Special_cards_database.json"
 database = Database(prop, spc)
 squares = database.sort_database()
 
@@ -51,6 +51,7 @@ class Game:
                                     active_sqr.do_action(player)
                                     unsolved = False
                                 except NotEnoughtMoneyError:
+                                    inter.draw()
                                     inter.do_action(player, True)
                         elif active_sqr.type() == "property":
                             owner = active_sqr.owner()

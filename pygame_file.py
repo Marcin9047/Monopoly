@@ -374,27 +374,22 @@ class player_pon(Board):
         x_for_1side = 2 * self.board.xcord - self.x_start + self.board.size
         y_for_2side = 2 * self.board.ycord - self.y_start + self.board.size
         if pos // 10 == 0:
-            x = 1
-            if pos == 0:
-                x = 0
-            self.x = self.x_start - (80 * x) - (pos * self.board.center_size // 9)
+            self.x = self.x_start - 20 - (pos * self.board.center_size // 9)
             self.y = self.y_start
         elif pos // 10 == 1:
-            if pos == 10:
-                pos += 1
-            pos_diff = pos - 11
+            pos_diff = pos - 10
             self.x = 2 * self.board.xcord - self.x_start + self.board.size
-            self.y = self.y_start - 80 - pos_diff * self.board.center_size // 9
+            self.y = self.y_start - pos_diff * self.board.center_size // 9
         if pos // 10 == 2:
             pos_diff = pos % 20
-            move = 80 + (pos_diff * self.board.center_size // 9)
+            move = (pos_diff * self.board.center_size // 9)
             self.x = x_for_1side + move
             self.y = 2 * self.board.ycord - self.y_start + self.board.size
         elif pos // 10 == 3:
             if pos == 30:
                 pos += 1
             pos_diff = pos % 30
-            move = 80 + (pos_diff * self.board.center_size // 9)
+            move = (pos_diff * self.board.center_size // 9)
             self.x = self.x_start
             self.y = y_for_2side + move
 
