@@ -1,5 +1,5 @@
 from monopoly_logs import Database
-from monopoly import Player
+from monopoly_player import Player
 from pygame_file import main
 from monopoly_exeptions import NotEnoughtMoneyError
 
@@ -42,6 +42,7 @@ class Game:
                         inter.draw_title(player)
                         inter.add_button(("Rzuć kośćmi", None))
                         inter.do_action(player)
+                        inter.draw()
                         pos = player.position()
                         active_sqr = self.database()[pos]
                         if active_sqr.type() == "special":
@@ -56,8 +57,16 @@ class Game:
                         elif active_sqr.type() == "property":
                             owner = active_sqr.owner()
                             if owner is not None and owner != player:
-                                print(active_sqr.owner().name())
-                                inter.add_button(("Zapłać", active_sqr))
+                                unsolved = True
+                                while unsolved:
+                                    inter.draw()
+                                    try:
+                                        inter.add_button(("Zapłać", active_sqr))
+                                        inter.do_action(player)
+                                        unsolved = False
+                                    except NotEnoughtMoneyError:
+                                        inter.draw()
+                                        inter.do_action(player, True)     
                         inter.draw()
                         inter.draw_title(player)
                         inter.do_action(player)

@@ -1,5 +1,6 @@
 import json
-from monopoly import Property, Area, Special_Square
+from monopoly import Area, Special_Square
+from monopoly_property import Property
 
 
 class Database:

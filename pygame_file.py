@@ -1,5 +1,6 @@
 import pygame
-from monopoly import Player, Property
+from monopoly_player import Player
+from monopoly_property import Property
 from pygame.locals import *
 from pygame.locals import Rect
 from monopoly_exeptions import WrongInputError, ZeroThrowsError, NotEnoughtMoneyError
@@ -205,10 +206,7 @@ class Button(Action):
                 except:
                     pass
             if name == "Zapłać":
-                try:
                     property.pay_rent(player)
-                except:
-                    pass
             if name == "Zastaw":
                 try:
                     property.set_pledge()
@@ -243,26 +241,22 @@ class Board:
         self.center_size = cent_size
         self.font_size = font_size
         self.corner_size = (self.size - self.center_size) // 2
-        self.pons = []
+        self.pawns = []
 
-    def add_pon(self, pon):
-        self.pons.append(pon)
+    def add_pawn(self, pawn):
+        self.pawns.append(pawn)
 
-    def draw_pons(self):
-        for pon in self.pons:
-            pon.draw()
+    def draw_pawns(self):
+        for pawn in self.pawns:
+            pawn.draw()
 
-    def find_start_pon_position(self):
-        for number, pon in enumerate(self.pons):
-            x = 0
-            y = 0
+    def find_start_pawn_position(self):
+        for number, pon in enumerate(self.pawns):
             number += 1
             if number % 2 == 0:
-                x = 1
+                pon.x_start += 20
             if number > 2:
-                y = 1
-            pon.x_start += (20 * x)
-            pon.y_start += (20 * y)
+                pon.y_start += 20
 
     def draw(self):
         surf = self.background
@@ -347,16 +341,16 @@ class Board:
                              Rect(move, move_up + 36 + move_blk, 104, 68), 2)
 
 
-class player_pon(Board):
+class player_pawn(Board):
     def __init__(self, board, colour, owner):
         self.x_start = board.xcord + board.size - 55
         self.y_start = board.ycord + board.size - 55
         self.board = board
         self._colour = colour
         self._owner = owner
-        owner.set_pon(self)
-        board.add_pon(self)
-        self.board.find_start_pon_position()
+        owner.set_pawn(self)
+        board.add_pawn(self)
+        self.board.find_start_pawn_position()
         self.x = self.x_start
         self.y = self.y_start
 
@@ -377,7 +371,7 @@ class player_pon(Board):
         pos = self.owner().position()
         x_for_1side = 2 * self.board.xcord - self.x_start + self.board.size
         y_for_2side = 2 * self.board.ycord - self.y_start + self.board.size
-        if pos // 10 == 0:
+        if pos // 10 == 0 and pos != 0:
             self.x = self.x_start - 20 - (pos * self.board.center_size // 9)
             self.y = self.y_start
         elif pos // 10 == 1:
@@ -444,9 +438,9 @@ class Positions:
                     textpos.centerx = surf.get_rect().centerx
                     textpos = textpos.move(332 - move_txt, 835)
                     surf.blit(text2, textpos)
-                    line3 = f"Rent: {property.rent()}"
+                    line3 = f"Czynsz: {property.rent()}"
                 else:
-                    line3 = f"Price: {property.price()}"
+                    line3 = f"Cena: {property.price()}"
                 text3 = font.render(line3, 1, black)
                 textpos = text3.get_rect()
                 textpos.centerx = surf.get_rect().centerx
@@ -589,16 +583,17 @@ class main():
         self.title = Player_name_title(back, title_color, 20, 70)
         self.board = Board(back, prop_color, deck_cen, 800, 596, 560, 80, 70)
         self.act_buttons = []
-        pons_colors = [red, blue, yellow, green]
+        pawns_colors = [red, blue, yellow, green]
         for number, player in enumerate(self.players):
-            pon_color = pons_colors[number]
-            pon = player_pon(self.board, pon_color, player)
+            pawn_color = pawns_colors[number]
+            pawn = player_pawn(self.board, pawn_color, player)
 
     def add_button(self, name):
         self.act_buttons.append(name)
 
     def clear(self):
         self.background.fill((color))
+        self.act_buttons = []
 
     def draw(self):
         self.clear()
@@ -618,7 +613,7 @@ class main():
         self.score_table = score_tb
         self.score_table.draw()
         self.score_table.draw_text()
-        self.board.draw_pons()
+        self.board.draw_pawns()
         pygame.display.flip()
 
     def draw_buttons(self, player, problem):
