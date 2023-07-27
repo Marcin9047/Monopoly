@@ -85,12 +85,23 @@ class Square:
         """
         self._type = type
         self._position = position
+        self._activity = False
 
     def type(self):
         return self._type
 
     def position(self):
         return self._position
+    
+    def set_active(self):
+        self._activity = True
+
+    def set_inactive(self):
+        self._activity = False
+
+    def isactive(self):
+        return self._activity
+
 
 
 class Area:

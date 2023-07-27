@@ -20,15 +20,15 @@ class Player(Dices):
         self._pause = 0
         self._isactive = True
 
-    def set_pawn(self, pon):
+    def set_pawn(self, pawn):
         """
         Sets player pon
         input: Player_pon class object
         """
-        self._pon = pon
+        self._pawn = pawn
 
     def pawn(self):
-        return self._pon
+        return self._pawn
 
     def properties(self):
         return self._properties

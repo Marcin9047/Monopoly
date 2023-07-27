@@ -14,9 +14,11 @@ black = (0, 0, 0)
 white = (255, 255, 255)
 monopoly_txt = (60, 31, 129)
 special = (174, 195, 222)
+lighted_spec = (0, 195, 222)
 score = (93, 168, 116)
 color = (212, 242, 221)
 prop_color = (180, 174, 222)
+lighted_prop = (220, 174, 222)
 deck_cen = (111, 155, 115)
 button_color = (123, 129, 31)
 pons_color = (216, 29, 29)
@@ -119,7 +121,13 @@ class Score(Side_Table):
             text = font.render(line, 1, black)
             textpos = text.get_rect()
             y_cord = self.ycord + self.title_hight + 50 + move_dw
-            textpos = textpos.move(self.xcord + 50, y_cord)
+            pygame.draw.rect(self.background,
+                             player.pawn().colour(),
+                             Rect(self.xcord + 50, y_cord, 20, 20), 0)
+            pygame.draw.rect(self.background,
+                             black,
+                             Rect(self.xcord + 50, y_cord, 20, 20), 1)
+            textpos = textpos.move(self.xcord + 80, y_cord)
             self.background.blit(text, textpos)
 
 
@@ -175,7 +183,7 @@ class Button(Action):
         textpos = textpos.move(x + (self.xsize // 4), y + (self.ysize // 4))
         surf.blit(text, textpos)
 
-    def activate(self, player):
+    def activate(self, player, game):
         property = self.property
         x = self.xval
         y = self.yval
@@ -185,7 +193,9 @@ class Button(Action):
         if x + xsize > cur[0] > x and y + ysize > cur[1] > y:
             name = self.name()
             if name == "Rzuć kośćmi":
+                game.last_sqr = game.database[player.position()]
                 x, y = player.throw_dices()
+                game.active_sqr = game.database[player.position()]
                 fontsize = (8 * self.ysize) // 10
                 font = pygame.font.Font(None, fontsize)
                 line = f'{x}  {y}'
@@ -318,26 +328,69 @@ class Board:
             move_blk = i * 66
             rec = Rect(596 + move_blk, 776, 68, 104)
             rec2 = Rect(596 + move_blk, move_up, 68, 104)
-            if database[10 - i].type() == "special":
-                pygame.draw.rect(background, special, rec)
+
+            if database[10 - i].isactive():
+                if database[10 - i].type() != "property":
+                    pygame.draw.rect(background, lighted_spec, rec)
+                else:
+                    pygame.draw.rect(background, lighted_prop, rec)
+            else:
+                if database[10 - i].type() != "property":
+                    pygame.draw.rect(background, special, rec)
+                else:
+                    pygame.draw.rect(background, prop_color, rec)
+
+            if database[i + 20].isactive():
+                if database[i + 20].type() != "property":
+                    pygame.draw.rect(background, lighted_spec, rec2)
+                else:
+                    pygame.draw.rect(background, lighted_prop, rec2)
+            else:
+                if database[i + 20].type() != "property":
+                    pygame.draw.rect(background, special, rec2)
+                else:
+                    pygame.draw.rect(background, prop_color, rec2)
+
             pygame.draw.rect(background, black, rec, 2)
-            if database[i + 20].type() == "special":
-                pygame.draw.rect(background, special, rec2)
             pygame.draw.rect(background, black, rec2, 2)
 
         """Pionowe rzędy"""
         for i in range(1, 10):
             move_blk = i * 66
-            if database[20 - i].type() == "special":
-                pygame.draw.rect(background, special,
-                                 Rect(560, move_up + 36 + move_blk, 104, 68))
+
+            if database[20 - i].isactive():
+                if database[20 - i].type() != "property":
+                    pygame.draw.rect(background, lighted_spec,
+                                     Rect(560, move_up + 36 + move_blk, 104, 68))
+                else:
+                    pygame.draw.rect(background, lighted_prop,
+                                     Rect(560, move_up + 36 + move_blk, 104, 68))
+            else:
+                if database[20 - i].type() != "property":
+                    pygame.draw.rect(background, special,
+                                     Rect(560, move_up + 36 + move_blk, 104, 68))
+                else:
+                    pygame.draw.rect(background, prop_color,
+                                     Rect(560, move_up + 36 + move_blk, 104, 68))
+            if database[i + 30].isactive():   
+                if database[i + 30].type() != "property":
+                    pygame.draw.rect(background, lighted_spec,
+                                     Rect(move, move_up + 36 + move_blk, 104, 68))
+                else:
+                    pygame.draw.rect(background, lighted_prop,
+                                     Rect(move, move_up + 36 + move_blk, 104, 68))
+            else:
+                if database[i + 30].type() != "property":
+                    pygame.draw.rect(background, special,
+                                     Rect(move, move_up + 36 + move_blk, 104, 68))
+                else:
+                    pygame.draw.rect(background, prop_color,
+                                     Rect(move, move_up + 36 + move_blk, 104, 68))        
+
             pygame.draw.rect(background, black,
-                             Rect(560, move_up + 36 + move_blk, 104, 68), 2)
-            if database[i + 30].type() == "special":
-                pygame.draw.rect(background, special,
-                                 Rect(move, move_up + 36 + move_blk, 104, 68))
+                                Rect(560, move_up + 36 + move_blk, 104, 68), 2)
             pygame.draw.rect(background, black,
-                             Rect(move, move_up + 36 + move_blk, 104, 68), 2)
+                                Rect(move, move_up + 36 + move_blk, 104, 68), 2)
 
 
 class player_pawn(Board):
@@ -586,6 +639,7 @@ class main():
         for number, player in enumerate(self.players):
             pawn_color = pawns_colors[number]
             pawn = player_pawn(self.board, pawn_color, player)
+            player.set_pawn(pawn)
 
     def add_button(self, name):
         self.act_buttons.append(name)
@@ -647,6 +701,7 @@ class main():
             else:
                 player.set_inactive()
         elif active_sqr.type() == "property":
+            active_sqr.set_active()
             if active_sqr.owner() == player:
                 if active_sqr.pledge():
                     list_of_buttons.append(("Cofnij zastaw", property))
@@ -671,6 +726,6 @@ class main():
                 if event.type == pygame.MOUSEBUTTONUP:
                     paused = False
                     for button in self.action_table.buttons():
-                        button.activate(player)
+                        button.activate(player, self)
                     self.act_buttons = []
         pygame.display.flip()

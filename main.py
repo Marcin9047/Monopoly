@@ -38,30 +38,34 @@ class Game:
                 if player.isactive():
                     inter.draw()
                     while player.ready_to_play():
+                        inter.active_sqr = inter.database[player.position()]
+                        inter.active_sqr.set_active()
                         inter.draw()
                         inter.draw_title(player)
                         inter.add_button(("Rzuć kośćmi", None))
                         inter.do_action(player)
+                        inter.last_sqr.set_inactive()
+                        inter.active_sqr.set_active()
                         inter.draw()
-                        pos = player.position()
-                        active_sqr = self.database()[pos]
-                        if active_sqr.type() == "special":
+                        if inter.active_sqr.type() != "property":
                             unsolved = True
                             while unsolved:
                                 try:
-                                    active_sqr.do_action(player)
+                                    inter.add_button(("Wykonaj", inter.active_sqr))
+                                    inter.do_action(player)
+                                    inter.active_sqr.do_action(player)
                                     unsolved = False
                                 except NotEnoughtMoneyError:
                                     inter.draw()
                                     inter.do_action(player, True)
-                        elif active_sqr.type() == "property":
-                            owner = active_sqr.owner()
+                        elif inter.active_sqr.type() == "property":
+                            owner = inter.active_sqr.owner()
                             if owner is not None and owner != player:
                                 unsolved = True
                                 while unsolved:
                                     inter.draw()
                                     try:
-                                        inter.add_button(("Zapłać", active_sqr))
+                                        inter.add_button(("Zapłać", inter.active_sqr))
                                         inter.do_action(player)
                                         unsolved = False
                                     except NotEnoughtMoneyError:
@@ -70,6 +74,7 @@ class Game:
                         inter.draw()
                         inter.draw_title(player)
                         inter.do_action(player)
+                        inter.active_sqr.set_inactive()
                     player.subtract_pause()
                     if player.pause() == 0:
                         player.add_throws()

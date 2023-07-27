@@ -37,6 +37,12 @@ class Property(Square):
 
     def position(self):
         return self._position
+    
+    def set_area(self, pos):
+        self._area = pos
+    
+    def area(self):
+        return self._area
 
     def price(self):
         return self._price
@@ -159,3 +165,4 @@ class Property(Square):
         self.set_owner(player)
         player.subtract_money(self.price())
         player.add_property(self)
+
