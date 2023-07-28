@@ -1,6 +1,6 @@
 from monopoly_logs import Database
 from monopoly_player import Player
-from pygame_file import main
+from pygame_file import Board_screen
 from monopoly_exeptions import NotEnoughtMoneyError
 
 prop = "monopoly/database.json"
@@ -31,7 +31,7 @@ class Game:
         return self._players
 
     def play(self):
-        inter = main(self.players(), self.database())
+        inter = Board_screen(self.players(), self.database())
         inter.draw()
         while self.isactive():
             for player in self.players():

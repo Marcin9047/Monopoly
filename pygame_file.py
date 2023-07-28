@@ -621,7 +621,7 @@ class Positions:
             surf.blit(text, textpos)
 
 
-class main():
+class Board_screen():
     def __init__(self, players, database):
         self.players = players
         self.database = database
