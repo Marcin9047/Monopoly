@@ -24,55 +24,182 @@ pons_color = (216, 29, 29)
 title_color = (60, 101, 64)
 
 
-def draw_welcom_title(screen):
-        fontsize = 75
-        font = pygame.font.Font(None, fontsize)
-        text = font.render("Welcome to Monopoly", 1, black)
-        textpos = text.get_rect()
-        textpos = textpos.move(35, 100)
-        screen.backgr.blit(text, textpos)
+class Add_player():
+    def __init__(self, screen, mode):
+        self.surf = screen.backgr
+        self.scr = screen.screen
+        self.mode = mode
+        self.new_pos = 200
 
-def draw_please_select(screen):
-        fontsize = 30
-        font = pygame.font.Font(None, fontsize)
-        text = font.render("Please select your game mode:", 1, black)
-        textpos = text.get_rect()
-        textpos = textpos.move(150, 180)
-        screen.backgr.blit(text, textpos)
+    def draw_new(self):
+        player_rec = Rect(50, self.new_pos, 500, 100)
+        pygame.draw.rect(self.surf, yellow, player_rec)
+        pygame.draw.rect(self.surf, black, player_rec, 2)
+        self.new_pos = self.new_pos + 200
+        self.scr.blit(self.surf, (0, 0))
+        pygame.display.flip()
 
-def draw_mods_names(screen):
-        surf = screen.backgr
-        fontsize = 60
-        font = pygame.font.Font(None, fontsize)
-        single = font.render("Singleplayer", 1, black)
-        multi = font.render("Multiplayer", 1, black)
-        team = font.render("Team battle", 1, black)
+    def players_list(self):
+        self.done_button = Rect(50, 600, 300, 100)
+        pygame.draw.rect(self.surf, black, self.done_button)
+        self.scr.blit(self.surf, (0, 0))
+        pygame.display.flip()
 
-        textpos = single.get_rect()
-        textpos = textpos.move(165, 325)
-        screen.backgr.blit(single, textpos)
-        pygame.draw.line(surf, black, [130, 370], [450, 370], 1)
-
-        textpos = multi.get_rect()
-        textpos = textpos.move(180, 525)
-        screen.backgr.blit(multi, textpos)
-        pygame.draw.line(surf, black, [130, 570], [450, 570], 1)
-
-        textpos = team.get_rect()
-        textpos = textpos.move(170, 725)
-        screen.backgr.blit(team, textpos)
-        pygame.draw.line(surf, black, [130, 770], [450, 770], 1)
+        self.all_done = False
+        self.down = 0
+        while self.all_done is False:
+            self.draw_add()
+            self.down += 1
 
 
-def draw_mods(screen):
-    surf = screen.backgr
-    draw_welcom_title(screen)
-    draw_please_select(screen)
-    for i in range(3):
-        mode_rec = Rect(50, 300 + 200 * i, 500, 100)
-        pygame.draw.rect(surf, blue, mode_rec)
-        pygame.draw.rect(surf, black, mode_rec, 2)
-    draw_mods_names(screen)
+
+    def draw_add(self):
+        
+        not_done = True
+                # basic font for user typed
+        screen = self.scr
+        surf = self.surf
+        base_font = pygame.font.Font(None, 32)
+        user_text = ''
+        
+        # create rectangle
+        input_rect = pygame.Rect(200, 200 + 200 * self.down, 140, 32)
+        ok_rect = pygame.Rect(400, 200 + 200 * self.down, 30, 30)
+
+        
+        
+        # color_active stores color(lightskyblue3) which
+        # gets active when input box is clicked by user
+        color_active = pygame.Color('lightskyblue3')
+        
+        # color_passive store color(chartreuse4) which is
+        # color of input box.
+        color_passive = pygame.Color('chartreuse4')
+        color = color_passive
+        
+        active = False
+        
+
+        while not_done and len(user_text) < 10:
+            for event in pygame.event.get():
+        
+            # if user types QUIT then the screen will close
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+        
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    print(not_done)
+                    if input_rect.collidepoint(event.pos):
+                        active = True
+                    elif ok_rect.collidepoint(event.pos):
+                        not_done = False
+                        active = False
+                        user = user_text
+                        print(user)
+                        print(not_done)
+                    elif self.done_button.collidepoint(event.pos):
+                        not_done = False
+                        self.all_done = True
+                    else:
+                        active = False
+        
+                if event.type == pygame.KEYDOWN and active:
+        
+                    # Check for backspace
+                    if event.key == pygame.K_BACKSPACE:
+        
+                        # get text input from 0 to -1 i.e. end.
+                        user_text = user_text[:-1]
+        
+                    # Unicode standard is used for string
+                    # formation
+                    else:
+                        user_text += event.unicode
+            
+            # it will set background color of screen
+            screen.fill((255, 255, 255))
+        
+            if active:
+                color = color_active
+            else:
+                color = color_passive
+                
+            # draw rectangle and argument passed which should
+            # be on screen
+            pygame.draw.rect(surf, color, input_rect)
+            pygame.draw.rect(surf, color, ok_rect)
+            
+        
+            text_surface = base_font.render(user_text, True, black)
+            
+            # render at position stated in arguments
+            surf.blit(text_surface, (input_rect.x+5, input_rect.y+5))
+            screen.blit(surf, (0, 0))
+            
+            # # set width of textfield so that text cannot get
+            # # outside of user's text input
+            # input_rect.w = max(100, text_surface.get_width()+10)
+            
+            # display.flip() will update only a portion of the
+            # screen to updated, not full area
+            pygame.display.flip()
+                
+            
+
+
+class Mode_screen():
+    def __init__(self, screen):
+        self.surf = screen.backgr
+
+    def draw_welcom_title(self):
+            fontsize = 75
+            font = pygame.font.Font(None, fontsize)
+            text = font.render("Welcome to Monopoly", 1, black)
+            textpos = text.get_rect()
+            textpos = textpos.move(35, 100)
+            self.surf.blit(text, textpos)
+
+    def draw_please_select(self):
+            fontsize = 30
+            font = pygame.font.Font(None, fontsize)
+            text = font.render("Please select your game mode:", 1, black)
+            textpos = text.get_rect()
+            textpos = textpos.move(150, 180)
+            self.surf.blit(text, textpos)
+
+    def draw_mods_names(self):
+            surf = self.surf
+            fontsize = 60
+            font = pygame.font.Font(None, fontsize)
+            single = font.render("Singleplayer", 1, black)
+            multi = font.render("Multiplayer", 1, black)
+            team = font.render("Team battle", 1, black)
+
+            textpos = single.get_rect()
+            textpos = textpos.move(165, 325)
+            surf.blit(single, textpos)
+            pygame.draw.line(surf, black, [130, 370], [450, 370], 1)
+
+            textpos = multi.get_rect()
+            textpos = textpos.move(180, 525)
+            surf.blit(multi, textpos)
+            pygame.draw.line(surf, black, [130, 570], [450, 570], 1)
+
+            textpos = team.get_rect()
+            textpos = textpos.move(170, 725)
+            surf.blit(team, textpos)
+            pygame.draw.line(surf, black, [130, 770], [450, 770], 1)
+
+
+    def draw_mods(self):
+        surf = self.surf
+        self.draw_welcom_title()
+        self.draw_please_select()
+        for i in range(3):
+            mode_rec = Rect(50, 300 + 200 * i, 500, 100)
+            pygame.draw.rect(surf, blue, mode_rec)
+            pygame.draw.rect(surf, black, mode_rec, 2)
+        self.draw_mods_names()
 
 
 class Setting_screen():
@@ -86,7 +213,9 @@ class Setting_screen():
         self.backgr.fill((green))
 
     def draw(self):
-        draw_mods(self)
+        mods = Mode_screen(self)
+        self.player_tab = Add_player(self, "multiplayer")
+        mods.draw_mods()
         self.screen.blit(self.backgr, (0, 0))
         pygame.display.flip()
 
@@ -98,14 +227,22 @@ class Setting_screen():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                if event.type == pygame.MOUSEBUTTONUP:
-                    paused = False
+                # if event.type == pygame.MOUSEBUTTONUP:
+                #     paused = False
+                    
+
                     # for button in self.action_table.buttons():
                         # button.activate(player, self)
                     # self.act_buttons = []
 
 test2 = True
-while test2:
-    test = Setting_screen()
-    test.draw()
-    test.do_action()
+test = Setting_screen()
+test.draw()
+test.backgr.fill((color))
+test.screen.blit(test.backgr, (0, 0))
+pygame.display.flip()
+test.player_tab.players_list()
+# test.player_tab.draw_new()
+# test.player_tab.draw_new()
+print("zupa")
+test.do_action()
