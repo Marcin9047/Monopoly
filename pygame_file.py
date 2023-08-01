@@ -622,7 +622,7 @@ class Positions:
 
 
 class Board_screen():
-    def __init__(self, players, database):
+    def __init__(self, players, pawns_colors, database):
         self.players = players
         self.database = database
         pygame.init()
@@ -634,8 +634,9 @@ class Board_screen():
         back = self.background
         self.title = Player_name_title(back, title_color, 20, 70)
         self.board = Board(back, prop_color, deck_cen, 800, 596, 560, 80, 70)
+        pygame.display.flip()
+
         self.act_buttons = []
-        pawns_colors = [red, blue, yellow, green]
         for number, player in enumerate(self.players):
             pawn_color = pawns_colors[number]
             pawn = player_pawn(self.board, pawn_color, player)

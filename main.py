@@ -2,6 +2,7 @@ from monopoly_logs import Database
 from monopoly_player import Player
 from pygame_file import Board_screen
 from monopoly_exeptions import NotEnoughtMoneyError
+from pygame_settingsscreen import Add_player, Mode_screen, Setting_screen
 
 prop = "monopoly/database.json"
 spc = "monopoly/Special_cards_database.json"
@@ -10,10 +11,11 @@ squares = database.sort_database()
 
 
 class Game:
-    def __init__(self, players, database):
+    def __init__(self, players, colors, database):
         self._active = True
         self._players = players
         self._database = database
+        self._pawns = colors
 
     def get_position(self, i):
         return self._database[i]
@@ -29,9 +31,12 @@ class Game:
 
     def players(self):
         return self._players
+    
+    def pawns(self):
+        return self._pawns
 
     def play(self):
-        inter = Board_screen(self.players(), self.database())
+        inter = Board_screen(self.players(), self.pawns(), self.database())
         inter.draw()
         while self.isactive():
             for player in self.players():
@@ -85,17 +90,14 @@ class Game:
                     print(f'{player.name()} is a winner')
 
 
-def players():
-    players = []
-    while True:
-        player = input("Wprowadź nazwę gracza: ")
-        if not player:
-            break
-        player_cls = Player(player, 1500)
-        players.append(player_cls)
-    return players
 
 
-x = players()
-game = Game(x, squares)
-game.play()
+
+def main():
+    test = Setting_screen()
+    test.draw()
+    players, colors = test.player_tab.players_list()
+    game = Game(players, colors, squares)
+    game.play()
+
+main()
