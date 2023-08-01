@@ -3,6 +3,7 @@ from monopoly_player import Player
 from monopoly_property import Property
 from pygame.locals import *
 from pygame.locals import Rect
+from shapely.geometry import Point, Polygon
 
 
 blue = (66, 135, 245)
@@ -23,6 +24,7 @@ button_color = (123, 129, 31)
 pons_color = (216, 29, 29)
 title_color = (60, 101, 64)
 
+pawns = [blue, red, yellow, green, black, white]
 
 class Add_player():
     def __init__(self, screen, mode):
@@ -47,7 +49,9 @@ class Add_player():
 
         self.all_done = False
         self.down = 0
+        self.act_colors = pawns
         while self.all_done is False:
+            self.pawns_inx = 0
             self.draw_add()
             self.down += 1
 
@@ -64,7 +68,15 @@ class Add_player():
         
         # create rectangle
         input_rect = pygame.Rect(200, 200 + 200 * self.down, 140, 32)
-        ok_rect = pygame.Rect(400, 200 + 200 * self.down, 30, 30)
+        ok_rect = pygame.Rect(500, 200 + 200 * self.down, 30, 30)
+        color_rect = pygame.Rect(400, 200 + 200 * self.down, 30, 30)
+
+
+        right_size = ((435, 200 + 200 * self.down), (435, 226 + 200 * self.down), (455, 213 + 200 * self.down))
+        left_size = ((395, 200 + 200 * self.down), (395, 226 + 200 * self.down), (375, 213 + 200 * self.down))
+        right_arrow = Polygon([(435, 200 + 200 * self.down), (435, 226 + 200 * self.down), (455, 213 + 200 * self.down)])
+        left_arrow = Polygon([(395, 200 + 200 * self.down), (395, 226 + 200 * self.down), (375, 213 + 200 * self.down)])
+        
 
         
         
@@ -80,7 +92,7 @@ class Add_player():
         active = False
         
 
-        while not_done and len(user_text) < 10:
+        while not_done:
             for event in pygame.event.get():
         
             # if user types QUIT then the screen will close
@@ -95,11 +107,29 @@ class Add_player():
                         not_done = False
                         active = False
                         user = user_text
+                        colors = []
+                        for i in self.act_colors:
+                            if i != self.act_colors[self.pawns_inx]:
+                                colors.append(i)
+                        self.act_colors = colors
                         print(user)
                         print(not_done)
                     elif self.done_button.collidepoint(event.pos):
                         not_done = False
                         self.all_done = True
+                    elif left_arrow.contains(Point(event.pos)):
+                        if self.pawns_inx == 0:
+                            self.pawns_inx = len(self.act_colors) - 1
+                        else:
+                            self.pawns_inx -= 1
+                        print("Wyszło")
+                    elif right_arrow.contains(Point(event.pos)):
+                        if self.pawns_inx == len(self.act_colors) - 1:
+                            self.pawns_inx = 0
+                        else:
+                            self.pawns_inx += 1
+                        print("Wyszło2")
+
                     else:
                         active = False
         
@@ -113,7 +143,7 @@ class Add_player():
         
                     # Unicode standard is used for string
                     # formation
-                    else:
+                    elif len(user_text) < 10:
                         user_text += event.unicode
             
             # it will set background color of screen
@@ -128,6 +158,11 @@ class Add_player():
             # be on screen
             pygame.draw.rect(surf, color, input_rect)
             pygame.draw.rect(surf, color, ok_rect)
+            pygame.draw.rect(surf, self.act_colors[self.pawns_inx], color_rect)
+
+            
+            pygame.draw.polygon(self.surf, black, right_size)
+            pygame.draw.polygon(self.surf, black, left_size)
             
         
             text_surface = base_font.render(user_text, True, black)
@@ -236,7 +271,10 @@ class Setting_screen():
                     # self.act_buttons = []
 
 test2 = True
+
 test = Setting_screen()
+test3 = Mode_screen(test)
+test3.draw_mods()
 test.draw()
 test.backgr.fill((color))
 test.screen.blit(test.backgr, (0, 0))
