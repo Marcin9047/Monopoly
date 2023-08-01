@@ -44,8 +44,14 @@ class Add_player():
     def players_list(self):
         self.surf.fill((255, 255, 255))
         pygame.display.flip()
-        self.done_button = Rect(50, 600, 300, 100)
-        pygame.draw.rect(self.surf, black, self.done_button)
+        self.done_button = Rect(50, 800, 500, 50)
+        pygame.draw.rect(self.surf, yellow, self.done_button)
+
+        font = pygame.font.Font(None, 40)
+        text_surface = font.render("Zapisz", True, black)
+        self.surf.blit(text_surface, (self.done_button.x+200, self.done_button.y+12))
+
+        pygame.draw.rect(self.surf, black, self.done_button, 1)
         self.scr.blit(self.surf, (0, 0))
         pygame.display.flip()
 
@@ -71,18 +77,29 @@ class Add_player():
         screen = self.scr
         surf = self.surf
         base_font = pygame.font.Font(None, 32)
+        ok_font = pygame.font.Font(None, 25)
         user_text = ''
+
+        back_color = (255, 255, 255)
         
         # create rectangle
-        input_rect = pygame.Rect(200, 200 + 200 * self.down, 140, 32)
-        ok_rect = pygame.Rect(500, 200 + 200 * self.down, 30, 30)
-        color_rect = pygame.Rect(400, 200 + 200 * self.down, 30, 30)
+
+        before_rect = pygame.Rect(50, 200 + 50 * self.down, 500, 32)
 
 
-        right_size = ((435, 200 + 200 * self.down), (435, 226 + 200 * self.down), (455, 213 + 200 * self.down))
-        left_size = ((395, 200 + 200 * self.down), (395, 226 + 200 * self.down), (375, 213 + 200 * self.down))
-        right_arrow = Polygon([(435, 200 + 200 * self.down), (435, 226 + 200 * self.down), (455, 213 + 200 * self.down)])
-        left_arrow = Polygon([(395, 200 + 200 * self.down), (395, 226 + 200 * self.down), (375, 213 + 200 * self.down)])
+
+        input_rect = pygame.Rect(50, 200 + 50 * self.down, 360, 32)
+        ok_rect = pygame.Rect(520, 200 + 50 * self.down, 32, 32)
+        color_rect = pygame.Rect(450, 200 + 50 * self.down, 32, 32)
+
+        done_rect = pygame.Rect(50, 200 + 50 * self.down, 502, 32)
+        color_done = ((450, 231 + 50 * self.down), (480, 200 + 50 * self.down), (550, 200 + 50 * self.down), (550, 231 + 50 * self.down))
+
+
+        right_size = ((485, 200 + 50 * self.down), (485, 228 + 50 * self.down), (505, 214 + 50 * self.down))
+        left_size = ((445, 200 + 50 * self.down), (445, 228 + 50 * self.down), (425, 214 + 50 * self.down))
+        right_arrow = Polygon([(485, 200 + 50 * self.down), (485, 228 + 50 * self.down), (505, 214 + 50 * self.down)])
+        left_arrow = Polygon([(445, 200 + 50 * self.down), (445, 228 + 50 * self.down), (425, 214 + 50 * self.down)])
         
 
         
@@ -97,6 +114,7 @@ class Add_player():
         color = color_passive
         
         active = False
+        ready = False
         screen.fill((255, 255, 255))
 
         while not_done:
@@ -108,42 +126,48 @@ class Add_player():
                     pygame.quit()
         
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    print(not_done)
-                    if input_rect.collidepoint(event.pos):
-                        active = True
-                    elif ok_rect.collidepoint(event.pos):
-                        not_done = False
-                        active = False
-                        user = Player(user_text, 1500)
-                        self.players.append(user)
-                        self.pawns.append(player_color)
-                        colors = []
-                        for i in self.act_colors:
-                            if i != self.act_colors[self.pawns_inx]:
-                                colors.append(i)
-                        self.act_colors = colors
-                        print(user)
-                        print(not_done)
-                    elif self.done_button.collidepoint(event.pos):
+
+                    if self.done_button.collidepoint(event.pos):
                         not_done = False
                         self.all_done = True
                         pygame.quit()
-                    elif left_arrow.contains(Point(event.pos)):
-                        if self.pawns_inx == 0:
-                            self.pawns_inx = len(self.act_colors) - 1
-                        else:
-                            self.pawns_inx -= 1
-                        print("Wyszło")
-                    elif right_arrow.contains(Point(event.pos)):
-                        if self.pawns_inx == len(self.act_colors) - 1:
-                            self.pawns_inx = 0
-                        else:
-                            self.pawns_inx += 1
-                        print("Wyszło2")
 
+                    if ready == False:
+                        if before_rect.collidepoint(event.pos):
+                            ready = True
                     else:
-                        active = False
-        
+                        if input_rect.collidepoint(event.pos):
+                            active = True
+                        elif ok_rect.collidepoint(event.pos):
+                            not_done = False
+                            active = False
+                            user = Player(user_text, 1500)
+                            self.players.append(user)
+                            self.pawns.append(player_color)
+                            colors = []
+                            for i in self.act_colors:
+                                if i != self.act_colors[self.pawns_inx]:
+                                    colors.append(i)
+                            self.act_colors = colors
+                            print(user)
+                            print(not_done)
+
+                        elif left_arrow.contains(Point(event.pos)):
+                            if self.pawns_inx == 0:
+                                self.pawns_inx = len(self.act_colors) - 1
+                            else:
+                                self.pawns_inx -= 1
+                            print("Wyszło")
+                        elif right_arrow.contains(Point(event.pos)):
+                            if self.pawns_inx == len(self.act_colors) - 1:
+                                self.pawns_inx = 0
+                            else:
+                                self.pawns_inx += 1
+                            print("Wyszło2")
+
+                        else:
+                            active = False
+            
                 if event.type == pygame.KEYDOWN and active:
         
                     # Check for backspace
@@ -159,27 +183,43 @@ class Add_player():
             
             # it will set background color of screen
             if self.all_done is not True:
-                screen.fill((255, 255, 255)) 
+                screen.fill(back_color)
                 if active:
                     color = color_active
                 else:
                     color = color_passive
-                    
+
+
                 # draw rectangle and argument passed which should
                 # be on screen
-                pygame.draw.rect(surf, color, input_rect)
-                pygame.draw.rect(surf, color, ok_rect)
-                pygame.draw.rect(surf, player_color, color_rect)
+                if not_done and ready:
+                    pygame.draw.rect(surf, back_color, before_rect)
+                    pygame.draw.rect(surf, color, input_rect)
+                    pygame.draw.rect(surf, black, input_rect, 1)
+                    pygame.draw.rect(surf, color_passive, ok_rect)
+                    pygame.draw.rect(surf, black, ok_rect, 1)
+                    pygame.draw.rect(surf, player_color, color_rect)
+                    pygame.draw.rect(surf, black, color_rect, 1)
+                    pygame.draw.polygon(self.surf, black, right_size)
+                    pygame.draw.polygon(self.surf, black, left_size)
+                    text_surface = base_font.render(user_text, True, black)
+                    surf.blit(text_surface, (input_rect.x+5, input_rect.y+5))
+                    text_surface = ok_font.render("OK", True, black)
+                    surf.blit(text_surface, (ok_rect.x+2, done_rect.y+7))
+                elif ready:
+                    screen.blit(surf, (0, 0))
+                    pygame.draw.rect(surf, color, done_rect)
+                    pygame.draw.polygon(self.surf, player_color, color_done)
+                    pygame.draw.rect(surf, black, done_rect, 1)
+                    text_surface = base_font.render(user_text, True, black)
+                    surf.blit(text_surface, (done_rect.x+30, done_rect.y+5))
+                elif not_done:
+                    screen.blit(surf, (0, 0))
+                    pygame.draw.rect(surf, color, before_rect)
+                    pygame.draw.rect(surf, black, before_rect, 1)
+                    text_surface = base_font.render("+ Add player", True, black)
+                    surf.blit(text_surface, (done_rect.x+180, done_rect.y+5))
 
-                
-                pygame.draw.polygon(self.surf, black, right_size)
-                pygame.draw.polygon(self.surf, black, left_size)
-                
-
-                text_surface = base_font.render(user_text, True, black)
-                
-                # render at position stated in arguments
-                surf.blit(text_surface, (input_rect.x+5, input_rect.y+5))
                 screen.blit(surf, (0, 0))
                 
                 # # set width of textfield so that text cannot get
