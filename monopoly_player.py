@@ -19,6 +19,7 @@ class Player(Dices):
         self._position = 0
         self._pause = 0
         self._isactive = True
+        self.ready_to_fly = False
 
     def set_pawn(self, pawn):
         """

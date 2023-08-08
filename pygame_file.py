@@ -23,6 +23,7 @@ deck_cen = (111, 155, 115)
 button_color = (123, 129, 31)
 pons_color = (216, 29, 29)
 title_color = (60, 101, 64)
+to_fly_color = (180, 174, 122)
 
 
 class Player_name_title:
@@ -236,6 +237,9 @@ class Button(Action):
                     property.sell_house()
                 except:
                     pass
+            if name == "Wykonaj" and self.property.name() == "Lotnisko":
+                player.ready_to_fly = True
+            
 
 
 class Board:
@@ -251,6 +255,7 @@ class Board:
         self.font_size = font_size
         self.corner_size = (self.size - self.center_size) // 2
         self.pawns = []
+        self.airport_places = []
 
     def add_pawn(self, pawn):
         self.pawns.append(pawn)
@@ -338,7 +343,13 @@ class Board:
                 if database[10 - i].type() != "property":
                     pygame.draw.rect(background, special, rec)
                 else:
-                    pygame.draw.rect(background, prop_color, rec)
+                    if database[10 - i].owner() and database[10 - i].owner().ready_to_fly:
+                        sqr = rec
+                        self.airport_places.append([10 - i, sqr])
+                        pygame.draw.rect(background, to_fly_color,
+                                        rec)
+                    else:
+                        pygame.draw.rect(background, prop_color, rec)
 
             if database[i + 20].isactive():
                 if database[i + 20].type() != "property":
@@ -349,7 +360,13 @@ class Board:
                 if database[i + 20].type() != "property":
                     pygame.draw.rect(background, special, rec2)
                 else:
-                    pygame.draw.rect(background, prop_color, rec2)
+                    if database[i + 20].owner() and database[i + 20].owner().ready_to_fly:
+                        sqr = rec2
+                        self.airport_places.append([i + 20, sqr])
+                        pygame.draw.rect(background, to_fly_color,
+                                         rec2)
+                    else:
+                        pygame.draw.rect(background, prop_color, rec2)
 
             pygame.draw.rect(background, black, rec, 2)
             pygame.draw.rect(background, black, rec2, 2)
@@ -365,13 +382,22 @@ class Board:
                 else:
                     pygame.draw.rect(background, lighted_prop,
                                      Rect(560, move_up + 36 + move_blk, 104, 68))
+                    
             else:
                 if database[20 - i].type() != "property":
                     pygame.draw.rect(background, special,
                                      Rect(560, move_up + 36 + move_blk, 104, 68))
                 else:
-                    pygame.draw.rect(background, prop_color,
-                                     Rect(560, move_up + 36 + move_blk, 104, 68))
+                    if database[20 - i].owner() and database[20 - i].owner().ready_to_fly:
+                        sqr = Rect(560, move_up + 36 + move_blk, 104, 68)
+                        self.airport_places.append([20 - i, sqr])
+                        pygame.draw.rect(background, to_fly_color,
+                                         Rect(560, move_up + 36 + move_blk, 104, 68))
+                    else:
+                        pygame.draw.rect(background, prop_color,
+                                         Rect(560, move_up + 36 + move_blk, 104, 68))
+                    
+                    
             if database[i + 30].isactive():   
                 if database[i + 30].type() != "property":
                     pygame.draw.rect(background, lighted_spec,
@@ -384,8 +410,14 @@ class Board:
                     pygame.draw.rect(background, special,
                                      Rect(move, move_up + 36 + move_blk, 104, 68))
                 else:
-                    pygame.draw.rect(background, prop_color,
-                                     Rect(move, move_up + 36 + move_blk, 104, 68))        
+                    if database[i + 30].owner() and database[i + 30].owner().ready_to_fly:
+                        sqr = Rect(move, move_up + 36 + move_blk, 104, 68)
+                        self.airport_places.append([i + 30, sqr])
+                        pygame.draw.rect(background, to_fly_color,
+                                         Rect(move, move_up + 36 + move_blk, 104, 68))
+                    else:
+                        pygame.draw.rect(background, prop_color,
+                                        Rect(move, move_up + 36 + move_blk, 104, 68))        
 
             pygame.draw.rect(background, black,
                                 Rect(560, move_up + 36 + move_blk, 104, 68), 2)
@@ -725,8 +757,16 @@ class Board_screen():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                 if event.type == pygame.MOUSEBUTTONUP:
-                    paused = False
-                    for button in self.action_table.buttons():
-                        button.activate(player, self)
-                    self.act_buttons = []
+                    if player.ready_to_fly and len(player.properties()) != 0:
+                        for pos, fly in self.board.airport_places:
+                            if fly.collidepoint(event.pos):
+                                player.go_to(pos)
+                                self.board.airport_places = []
+                                player.ready_to_fly = False
+                                paused = False
+                    else:
+                        for button in self.action_table.buttons():
+                            button.activate(player, self)
+                            paused = False
+                        self.act_buttons = []
         pygame.display.flip()

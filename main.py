@@ -58,6 +58,7 @@ class Game:
                                 try:
                                     inter.add_button(("Wykonaj", inter.active_sqr))
                                     inter.do_action(player)
+                                    inter.draw()
                                     inter.active_sqr.do_action(player)
                                     unsolved = False
                                 except NotEnoughtMoneyError:

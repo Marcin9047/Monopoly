@@ -47,6 +47,14 @@ class Add_player():
         self.done_button = Rect(50, 800, 500, 50)
         pygame.draw.rect(self.surf, yellow, self.done_button)
 
+        fontsize = 75
+        font = pygame.font.Font(None, fontsize)
+        text = font.render(self.mode, 1, black)
+        textpos = text.get_rect()
+        textpos = textpos.move(150, 60)
+        self.surf.blit(text, textpos)
+
+
         font = pygame.font.Font(None, 40)
         text_surface = font.render("Zapisz", True, black)
         self.surf.blit(text_surface, (self.done_button.x+200, self.done_button.y+12))
