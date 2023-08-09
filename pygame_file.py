@@ -184,6 +184,19 @@ class Button(Action):
         textpos = textpos.move(x + (self.xsize // 4), y + (self.ysize // 4))
         surf.blit(text, textpos)
 
+    def to_activate(self, player, game):
+        x = self.xval
+        y = self.yval
+        xsize = self.xsize
+        ysize = self.ysize
+        cur = pygame.mouse.get_pos()
+        if x + xsize > cur[0] > x and y + ysize > cur[1] > y:
+            return True
+        else:
+            return False
+
+
+
     def activate(self, player, game):
         property = self.property
         x = self.xval
@@ -347,7 +360,7 @@ class Board:
                         sqr = rec
                         self.airport_places.append([10 - i, sqr])
                         pygame.draw.rect(background, to_fly_color,
-                                        rec)
+                                         rec)
                     else:
                         pygame.draw.rect(background, prop_color, rec)
 
@@ -692,14 +705,15 @@ class Board_screen():
         self.board.draw_corner(3, white)
         self.board.draw_corner(4, white)
         self.board.draw_cards(self.database)
-        position = Positions(self.background, self.database, 20)
-        position.draw()
+        self.position = Positions(self.background, self.database, 20)
+        self.position.draw()
         srf = self.background
         score_tb = Score(self.players, srf, score, 400, 800, 1420, 80, 100, 50)
         self.score_table = score_tb
         self.score_table.draw()
         self.score_table.draw_text()
         self.board.draw_pawns()
+        self.screen.blit(self.background, (0, 0))
         pygame.display.flip()
 
     def draw_buttons(self, player, problem):
@@ -752,7 +766,7 @@ class Board_screen():
         self.draw_buttons(player, problem)
         buttons = self.act_buttons
         paused = True
-        while paused and len(buttons) != 0:
+        while (paused and len(buttons) != 0) or (paused and player.ready_to_fly):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -762,11 +776,23 @@ class Board_screen():
                             if fly.collidepoint(event.pos):
                                 player.go_to(pos)
                                 self.board.airport_places = []
-                                player.ready_to_fly = False
                                 paused = False
+                                player.ready_to_fly = False
+                    elif player.ready_to_fly and len(player.properties()) == 0:
+                        paused = False
+                        player.ready_to_fly = False
                     else:
                         for button in self.action_table.buttons():
-                            button.activate(player, self)
-                            paused = False
-                        self.act_buttons = []
+                            if button.to_activate(player, self):
+                                button.activate(player, self)
+                                if player.ready_to_fly and len(buttons) != 0 :
+                                    self.act_buttons = []
+                                    buttons = []
+                                    self.clear()
+                                    self.screen.blit(self.background, (0, 0))
+                                    self.draw()
+                                elif player.ready_to_fly is False:
+                                    paused = False
+                                    self.act_buttons = []
+                        
         pygame.display.flip()
